@@ -39,9 +39,10 @@ public class RefillHandler
                     {
                         if (oneItem.getTemplate() == FuelStorageItems.fuelStorage )
                         {
-                            if (!fuelStorages.contains(oneItem))
-                            fuelStorages.add(oneItem);
-                            FuelStorage.logger.log(Level.INFO,"Polling Fireplaces. Found "+fuelStorages.size()+ " firing Places");
+                            if (!fuelStorages.contains(oneItem)) {
+                                fuelStorages.add(oneItem);
+                                FuelStorage.logger.log(Level.INFO, "Polling Fireplaces. Found " + fuelStorages.size() + " firing Places");
+                            }
                         }
                     }
                     nextpoll=time+300000;
@@ -72,8 +73,7 @@ public class RefillHandler
                              if (compare.getTemplateId() == ItemList.forge || compare.getTemplateId() == ItemList.kiln || compare.getTemplateId() == ItemList.stoneOven || compare.getTemplateId() == ItemList.still || compare.getTemplateId() == ItemList.smelter)
                              {
                                  accompanyingFurnace = compare;
-                                 FuelStorage.logger.log(Level.INFO, "fuel Storage@ " + fuelStorageToEdit.getPosX() + " , " + fuelStorageToEdit.getPosY() +
-                                         "Is fuelling " + compare.getName() + " @ " + compare.getPosX() + " , " + compare.getPosY() + ".");
+
                              }
 
 
@@ -102,7 +102,8 @@ public class RefillHandler
                                  short newPTemp = (short) (int) Math.min(30000.0D, accompanyingFurnace.getTemperature() + newTemp);
                                  accompanyingFurnace.setTemperature(newPTemp);
                                  Items.destroyItem(fuelItemWithLowestEfficiency.getWurmId());
-                                 FuelStorage.logger.log(Level.INFO, "fueled the fire place with " + fuelItemWithLowestEfficiency.getTemplate().getName());
+
+                                 FuelStorage.logger.log(Level.INFO, "fueled the fire place"+ accompanyingFurnace.getTemplate().getName()+ "@" +" "+ accompanyingFurnace.getTileX() +" "+ accompanyingFurnace.getTileY() + "with " + fuelItemWithLowestEfficiency.getTemplate().getName());
                              }
                          }
                      }

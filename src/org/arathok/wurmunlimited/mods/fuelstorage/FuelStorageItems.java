@@ -21,10 +21,8 @@ public class FuelStorageItems {
 
     public static void registerFuelStorage() throws IOException
     {
-        fuelStorage = new ItemTemplateBuilder("arathok.fuelStorage.fuelStorage").name("glass mixture", "glass mixtures",
-                                                                                    "A mixture made from sand, ash, and sandstone shards. Under high temperatures it will turn into a honey"
-                                                                                            + "like paste. cooling it off you will get crystal clear glass. But what would a pile of glass be of use for? If you had some kind of a"
-                                                                                            + "mould you could press the hot glass into shape...")
+        fuelStorage = new ItemTemplateBuilder("arathok.fuelStorage.fuelStorage").name("fuel storage", "fuel storage",
+                                                                                    "A box made of Wood and Iron Bars designed to have fuel items drop into a fire place automatically")
                 .modelName("model.fuelStorage.fuelStorage")
                 .imageNumber((short) IconConstants.ICON_SMALL_CRATE)
                 .itemTypes(new short[] {
@@ -37,7 +35,7 @@ public class FuelStorageItems {
                         ItemTypes.ITEM_TYPE_HOLLOW,
                         ItemTypes.ITEM_TYPE_METAL,
 
-                }).decayTime(9072000L).dimensions(40, 40, 40).weightGrams(5000).material(Materials.MATERIAL_IRON)
+                }).decayTime(9072000L).dimensions(100, 100, 100).weightGrams(5000).material(Materials.MATERIAL_IRON)
                 .behaviourType((short) 1).primarySkill(SkillList.ALCHEMY_NATURAL).difficulty(10) // no hard lock
                 .build();
 
