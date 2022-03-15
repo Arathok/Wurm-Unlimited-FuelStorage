@@ -69,8 +69,8 @@ public class FuelStorage
 
         @Override
         public void onServerPoll() {
-
-
+        RefillHandler.PollFurnaces();
+        RefillHandler.Refill();
         }
 
 
