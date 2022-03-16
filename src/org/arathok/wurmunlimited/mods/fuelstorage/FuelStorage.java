@@ -43,10 +43,10 @@ public class FuelStorage
             if (Config.classhook)
                 try {
                         ClassPool classPool = HookManager.getInstance().getClassPool();
-                        CtClass ctItems = classPool.get("com.wurmonline.server.Items.Item");
+                        CtClass ctItems = classPool.get("com.wurmonline.server.items.Item");
 
-                        ctItems.getMethod("coolOutsideItem", "(Lcom/wurmonline/server/items/Item;I)V")
-                                .insertAt(9803,"org.arathok.wurmunlimited.mods.fuelstorage.RefillHandler.Refill(this,$1);");
+                        ctItems.getMethod("coolOutSideItem", "(ZZ)V")
+                                .insertAfter("org.arathok.wurmunlimited.mods.fuelstorage.RefillHandler.Refill2();");
                         /*
                         private void coolOutSideItem(boolean everySecond, boolean insideStructure) {
     if (this.temperature > 200) {
@@ -163,12 +163,9 @@ public class FuelStorage
         if (!Config.classhook)
                 {
                 RefillHandler.PollFurnaces();
-                        try {
-                                RefillHandler.Refill();
-                        } catch (NoSuchItemException e) {
-                                e.printStackTrace();
-                                logger.log(Level.SEVERE,"fuel storage item was deleted somehow!");
-                        }
+
+                            //    RefillHandler.Refill();
+
                 }
         }
 

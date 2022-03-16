@@ -2,23 +2,11 @@ package org.arathok.wurmunlimited.mods.fuelstorage;
 
 
 import com.wurmonline.math.TilePos;
-import com.wurmonline.mesh.Tiles;
 import com.wurmonline.server.Items;
-import com.wurmonline.server.NoSuchItemException;
-import com.wurmonline.server.Server;
-import com.wurmonline.server.Servers;
 
 import com.wurmonline.server.items.Item;
-import com.wurmonline.server.items.ItemList;
-import com.wurmonline.server.zones.VolaTile;
-import com.wurmonline.server.zones.VolaTileItems;
-import com.wurmonline.server.zones.Zone;
 import com.wurmonline.server.zones.Zones;
-import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
-import org.gotti.wurmunlimited.modloader.classhooks.InvocationHandlerFactory;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,6 +43,7 @@ public class RefillHandler
 
             }
  // OLD
+    /*
             public static void Refill() throws NoSuchItemException {
                  TilePos tp = null;
                  long time = System.currentTimeMillis();
@@ -112,7 +101,7 @@ public class RefillHandler
 
 
 //new
-/*    public static void Refill(Item item) ///TODO find out if poll is item or not and where items are polled.
+*/    public static void Refill2(Item item) ///TODO find out if poll is item or not and where items are polled.
     {
         if (item.getTemplateId() == 180 || item.getTemplateId() == 1023 || item.getTemplateId() == 178 || item.getTemplateId() == 1178 || item.getTemplateId() == 1028)
         {
@@ -158,7 +147,7 @@ public class RefillHandler
 
     }
 
- */
+
 }
 
 
