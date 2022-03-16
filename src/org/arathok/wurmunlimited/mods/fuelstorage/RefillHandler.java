@@ -75,14 +75,14 @@ public class RefillHandler
 
                              if (Items.getItem(fuelStorageToEdit).isOnSurface())
                                  for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
-                                     if (oneItem.getTemplate() == FuelStorageItems.fuelStorage) {
+                                     if (oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 1178||oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 180||oneItem.getTemplateId() == 1023||oneItem.getTemplateId() == 1028) {
                                          accompanyingFurnace = oneItem.getWurmId();
                                          break;
                                      }
                                  }
                              else
                                  for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
-                                     if (oneItem.getTemplate() == FuelStorageItems.fuelStorage) {
+                                     if (oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 1178||oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 180||oneItem.getTemplateId() == 1023||oneItem.getTemplateId() == 1028) {
                                          accompanyingFurnace = oneItem.getWurmId();
                                          break;
                                      }
@@ -105,9 +105,9 @@ public class RefillHandler
                          }
                      }
 
-
+                     nextrefillpoll=time+60000;
                  }
-                 nextrefillpoll=time+60000;
+
              }
 
 
