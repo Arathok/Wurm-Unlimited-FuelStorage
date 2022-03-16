@@ -31,6 +31,7 @@ public class FuelStorage
 
         @Override
         public void configure(Properties properties) {
+                Config.classhook=Boolean.parseBoolean(properties.getProperty("classhook","false"));
 
         }
 
@@ -38,6 +39,7 @@ public class FuelStorage
         public void preInit() {
 
             ModActions.init();
+            if (Config.classhook)
                 try {
                         ClassPool classPool = HookManager.getInstance().getClassPool();
                         CtClass ctItems = classPool.get("com.wurmonline.server.Items.Item");
@@ -157,9 +159,11 @@ public class FuelStorage
 
         @Override
         public void onServerPoll() {
-        RefillHandler.PollFurnaces();
-        RefillHandler.Refill();
-
+        if (!Config.classhook)
+                {
+                RefillHandler.PollFurnaces();
+                RefillHandler.Refill();
+                }
         }
 
 

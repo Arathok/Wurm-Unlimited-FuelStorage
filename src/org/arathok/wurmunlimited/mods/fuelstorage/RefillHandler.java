@@ -101,6 +101,7 @@ public class RefillHandler
                              }
 
                      }
+                     fuelStorages.clear();
 
                  }
                  nextrefillpoll=time+60000;
