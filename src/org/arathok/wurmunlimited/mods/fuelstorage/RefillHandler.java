@@ -2,6 +2,7 @@ package org.arathok.wurmunlimited.mods.fuelstorage;
 
 
 import com.wurmonline.math.TilePos;
+import com.wurmonline.mesh.Tiles;
 import com.wurmonline.server.Items;
 import com.wurmonline.server.Server;
 import com.wurmonline.server.Servers;
@@ -9,6 +10,7 @@ import com.wurmonline.server.Servers;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.zones.VolaTile;
+import com.wurmonline.server.zones.VolaTileItems;
 import com.wurmonline.server.zones.Zone;
 import com.wurmonline.server.zones.Zones;
 import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
@@ -51,75 +53,109 @@ public class RefillHandler
                 }
 
             }
-/* // OLD
+ // OLD
             public static void Refill()
              {
+                 TilePos tp = null;
                  long time = System.currentTimeMillis();
+                 Item accompanyingFurnace=null;
                  if (time>nextrefillpoll)
                  {
                      FuelStorage.logger.log(Level.INFO, "Refuelling:");
                      for (Item fuelStorageToEdit : fuelStorages)
                      {
-                         Item accompanyingFurnace = null;
-                         Item fuelItemWithLowestEfficiency = null;
-                         VolaTile tileOfFurnaceToEdit;
+                         tp=fuelStorageToEdit.getTilePos();
+
                          if (fuelStorageToEdit.isOnSurface())
-                             tileOfFurnaceToEdit = Zones.getTileOrNull(fuelStorageToEdit.getTilePos(), true);
+                           for (Item oneItem : Zones.getTileOrNull(tp,true).getItems())
+                            {
+                            if (oneItem.getTemplate() == FuelStorageItems.fuelStorage)
+                                {
+                                accompanyingFurnace = oneItem;
+                                break;
+                                }
+                            }
                          else
-                             tileOfFurnaceToEdit = Zones.getTileOrNull(fuelStorageToEdit.getTilePos(), false);
-
-                         Iterator<Item> otherItemsOnTile = Arrays.stream(tileOfFurnaceToEdit.getItems()).iterator();
-                         while (otherItemsOnTile.hasNext())
-                         {
-                             Item compare = otherItemsOnTile.next();
-                             if (compare.getTemplateId() == ItemList.forge || compare.getTemplateId() == ItemList.kiln || compare.getTemplateId() == ItemList.stoneOven || compare.getTemplateId() == ItemList.still || compare.getTemplateId() == ItemList.smelter)
-                             {
-                                 accompanyingFurnace = compare;
-
-                             }
+                               for (Item oneItem : Zones.getTileOrNull(tp,true).getItems())
+                                {
+                                 if (oneItem.getTemplate() == FuelStorageItems.fuelStorage)
+                                    {
+                                    accompanyingFurnace = oneItem;
+                                    break;
+                                    }
+                                }
 
 
-                         }
+                        if (accompanyingFurnace != null)
+                        if (accompanyingFurnace.getTemperature() < 2000 && accompanyingFurnace.getTemperature()>1000&&fuelStorageToEdit.getFirstContainedItem() != null)
+                            {
 
-                         Item[] fuelItems = fuelStorageToEdit.getItemsAsArray();
-                         Item searchFuelItemWithLowestEfficiency;
-                         Iterator<Item> pickLowestFuelEfficiency = Arrays.stream(fuelItems).iterator();
-                         int fuelEfficiency = 10;
-                         while (pickLowestFuelEfficiency.hasNext())
-                         {
+                             double newTemp = (fuelStorageToEdit.getFirstContainedItem().getWeightGrams() * Item.fuelEfficiency(fuelStorageToEdit.getFirstContainedItem().getMaterial()));
 
 
-                             searchFuelItemWithLowestEfficiency = pickLowestFuelEfficiency.next();
-                             if (Item.fuelEfficiency(searchFuelItemWithLowestEfficiency.getMaterial()) < fuelEfficiency)
-                                 fuelItemWithLowestEfficiency = searchFuelItemWithLowestEfficiency;
-
-
-                         }
-                         if (fuelItemWithLowestEfficiency != null)
-                         {
-                             double newTemp = (fuelItemWithLowestEfficiency.getWeightGrams() * Item.fuelEfficiency(fuelItemWithLowestEfficiency.getMaterial()));
-                             if (accompanyingFurnace != null && accompanyingFurnace.getTemperature() > 1000 && accompanyingFurnace.getTemperature() < 2000)
-                             {
                                  short maxTemp = 30000;
                                  short newPTemp = (short) (int) Math.min(30000.0D, accompanyingFurnace.getTemperature() + newTemp);
                                  accompanyingFurnace.setTemperature(newPTemp);
-                                 Items.destroyItem(fuelItemWithLowestEfficiency.getWurmId());
+                                 Items.destroyItem(fuelStorageToEdit.getFirstContainedItem().getWurmId());
 
                                  FuelStorage.logger.log(Level.INFO, "fueled the fire place"+ accompanyingFurnace.getTemplate().getName()+ "@" +" "+ accompanyingFurnace.getTileX() +" "+ accompanyingFurnace.getTileY() + "with " + fuelItemWithLowestEfficiency.getTemplate().getName());
                              }
-                         }
+                         
                      }
-                     nextrefillpoll=time+60000;
+
                  }
+                 nextrefillpoll=time+60000;
              }
 
- */
-//new
-    public static void Refill()
-    {
 
+//new
+/*    public static void Refill(Item item) ///TODO find out if poll is item or not and where items are polled.
+    {
+        if (item.getTemplateId() == 180 || item.getTemplateId() == 1023 || item.getTemplateId() == 178 || item.getTemplateId() == 1178 || item.getTemplateId() == 1028)
+        {
+            TilePos tp = item.getTilePos();
+
+            Item fuelStorage = null;
+            byte fuelStorageFirstMaterial;
+            if (item.isOnSurface())
+
+            for (Item oneItem : Zones.getTileOrNull(tp,true).getItems())
+            {
+                if (oneItem.getTemplate() == FuelStorageItems.fuelStorage)
+                {
+                    fuelStorage = oneItem;
+                    break;
+                }
+            }
+            else
+            {
+                for (Item oneItem : Zones.getTileOrNull(tp,false).getItems())
+                {
+                    if (oneItem.getTemplate() == FuelStorageItems.fuelStorage)
+                    {
+                        fuelStorage = oneItem;
+                        break;
+                    }
+                }
+            }
+            if (fuelStorage != null)
+            {
+
+                if (item.getTemperature() < 2000 && item.getTemperature()>1000&&fuelStorage.getFirstContainedItem() != null)
+                {
+
+                    double newTemp = (fuelStorage.getFirstContainedItem().getWeightGrams() * fuelStorage.getFirstContainedItem().getMaterial());
+                    short maxTemp = 30000;
+                    short newPTemp = (short) (int) Math.min(30000.0D, item.getTemperature() + newTemp);
+                    item.setTemperature(newPTemp);
+                    Items.destroyItem(fuelStorage.getFirstContainedItem().getWurmId());
+                }
+            }
+        }
 
     }
+
+ */
 }
 
 

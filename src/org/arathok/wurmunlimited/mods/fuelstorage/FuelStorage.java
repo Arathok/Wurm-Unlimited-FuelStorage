@@ -42,7 +42,7 @@ public class FuelStorage
                         CtClass ctItems = classPool.get("com.wurmonline.server.Items.Item");
 
                         ctItems.getMethod("coolOutsideItem", "(Lcom/wurmonline/server/items/Item;I)V")
-                                .insertAfter("org.arathok.wurmunlimited.mods.fuelstorage.RefillHandler.Refill(this,$1);");
+                                .insertAt(9803,"org.arathok.wurmunlimited.mods.fuelstorage.RefillHandler.Refill(this,$1);");
                         /*
                         private void coolOutSideItem(boolean everySecond, boolean insideStructure) {
     if (this.temperature > 200) {
@@ -156,8 +156,8 @@ public class FuelStorage
 
         @Override
         public void onServerPoll() {
-        RefillHandler.PollFurnaces();
-        RefillHandler.Refill();
+
+
         }
 
 
