@@ -11,6 +11,8 @@ import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zone;
 import com.wurmonline.server.zones.Zones;
+import org.gotti.wurmunlimited.modloader.classhooks.HookManager;
+import org.gotti.wurmunlimited.modloader.classhooks.InvocationHandlerFactory;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -49,7 +51,7 @@ public class RefillHandler
                 }
 
             }
-
+/* // OLD
             public static void Refill()
              {
                  long time = System.currentTimeMillis();
@@ -111,6 +113,13 @@ public class RefillHandler
                  }
              }
 
+ */
+//new
+    public static void Refill()
+    {
+
+
+    }
 }
 
 
