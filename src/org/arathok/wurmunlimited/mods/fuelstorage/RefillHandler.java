@@ -24,10 +24,11 @@ public class RefillHandler
             {
                 long time= System.currentTimeMillis();
                 Item[] allItems;
-                allItems = Items.getAllItems();
+
 
                 if (time > nextpoll)
                 {
+                    allItems = Items.getAllItems();
                     for (Item oneItem : allItems)
                     {
                         if (oneItem.getTemplate() == FuelStorageItems.fuelStorage )
