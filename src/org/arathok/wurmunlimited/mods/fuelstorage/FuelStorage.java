@@ -18,6 +18,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.sql.Ref;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -156,7 +157,8 @@ public class FuelStorage
 
         @Override
         public void onServerPoll() {
-
+        RefillHandler.PollFurnaces();
+        RefillHandler.Refill();
 
         }
 

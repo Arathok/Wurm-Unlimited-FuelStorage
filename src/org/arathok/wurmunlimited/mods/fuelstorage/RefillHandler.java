@@ -89,18 +89,17 @@ public class RefillHandler
                         if (accompanyingFurnace != null)
                         if (accompanyingFurnace.getTemperature() < 2000 && accompanyingFurnace.getTemperature()>1000&&fuelStorageToEdit.getFirstContainedItem() != null)
                             {
-
-                             double newTemp = (fuelStorageToEdit.getFirstContainedItem().getWeightGrams() * Item.fuelEfficiency(fuelStorageToEdit.getFirstContainedItem().getMaterial()));
-
-
+                                FuelStorage.logger.log(Level.INFO,
+                               "fueled the fire place"+ accompanyingFurnace.getTemplate().getName()+ "@" +" "+ accompanyingFurnace.getTileX() +" "+ accompanyingFurnace.getTileY() + "with " + fuelStorageToEdit.getFirstContainedItem().getTemplate().getName());
+                                 double newTemp = (fuelStorageToEdit.getFirstContainedItem().getWeightGrams() * Item.fuelEfficiency(fuelStorageToEdit.getFirstContainedItem().getMaterial()));
                                  short maxTemp = 30000;
                                  short newPTemp = (short) (int) Math.min(30000.0D, accompanyingFurnace.getTemperature() + newTemp);
                                  accompanyingFurnace.setTemperature(newPTemp);
                                  Items.destroyItem(fuelStorageToEdit.getFirstContainedItem().getWurmId());
 
-                                 FuelStorage.logger.log(Level.INFO, "fueled the fire place"+ accompanyingFurnace.getTemplate().getName()+ "@" +" "+ accompanyingFurnace.getTileX() +" "+ accompanyingFurnace.getTileY() + "with " + fuelItemWithLowestEfficiency.getTemplate().getName());
+
                              }
-                         
+
                      }
 
                  }
