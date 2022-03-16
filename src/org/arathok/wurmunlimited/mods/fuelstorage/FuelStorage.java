@@ -1,5 +1,6 @@
 package org.arathok.wurmunlimited.mods.fuelstorage;
 
+import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.creatures.Communicator;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.skills.NoSuchSkillException;
@@ -162,7 +163,12 @@ public class FuelStorage
         if (!Config.classhook)
                 {
                 RefillHandler.PollFurnaces();
-                RefillHandler.Refill();
+                        try {
+                                RefillHandler.Refill();
+                        } catch (NoSuchItemException e) {
+                                e.printStackTrace();
+                                logger.log(Level.SEVERE,"fuel storage item was deleted somehow!");
+                        }
                 }
         }
 
