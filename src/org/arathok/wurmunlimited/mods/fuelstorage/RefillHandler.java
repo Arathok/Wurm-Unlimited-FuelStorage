@@ -61,7 +61,8 @@ public class RefillHandler
                              fuelStorages.remove(fuelStorageToEdit);
                          else {
 
-
+                         if (Items.getItem(fuelStorageToEdit).getTemperature()>200)
+                             Items.getItem(fuelStorageToEdit).setTemperature((short) 100);
 
                              tp = Items.getItem(fuelStorageToEdit).getTilePos();
 
