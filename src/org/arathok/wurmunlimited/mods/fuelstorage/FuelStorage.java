@@ -164,7 +164,15 @@ public class FuelStorage
                 {
                 RefillHandler.PollFurnaces();
 
-                            //    RefillHandler.Refill();
+                        try
+                        {
+                                RefillHandler.Refill();
+                        }
+                        catch (NoSuchItemException e)
+                        {
+                                e.printStackTrace();
+                                logger.log(Level.SEVERE,"Fuel Storage somehow got deleted?",e);
+                        }
 
                 }
         }

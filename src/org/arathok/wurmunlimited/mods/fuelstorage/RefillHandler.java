@@ -4,6 +4,7 @@ package org.arathok.wurmunlimited.mods.fuelstorage;
 import com.wurmonline.math.TilePos;
 import com.wurmonline.server.Items;
 
+import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.zones.Zones;
 
@@ -44,11 +45,12 @@ public class RefillHandler
 
             }
  // OLD
-    /*
-            public static void Refill() throws NoSuchItemException {
+
+            public static void Refill() throws NoSuchItemException
+            {
                  TilePos tp = null;
                  long time = System.currentTimeMillis();
-                 Long accompanyingFurnace=null;
+                 long accompanyingFurnace=-10;
                  if (time>nextrefillpoll)
                  {
                      FuelStorage.logger.log(Level.INFO, "Refuelling:");
@@ -60,8 +62,8 @@ public class RefillHandler
                          else {
 
 
-                             if (Items.getItem(fuelStorageToEdit).getTilePos() != null)
-                                 tp = Items.getItem(fuelStorageToEdit).getTilePos();
+
+                             tp = Items.getItem(fuelStorageToEdit).getTilePos();
 
                              if (Items.getItem(fuelStorageToEdit).isOnSurface())
                                  for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
@@ -78,8 +80,8 @@ public class RefillHandler
                                      }
                                  }
 
+                             if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)
 
-                             if (Items.getItem(accompanyingFurnace) != null)
                                  if (Items.getItem(accompanyingFurnace).getTemperature() < 2000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && Items.getItem(fuelStorageToEdit).getFirstContainedItem() != null) {
                                      FuelStorage.logger.log(Level.INFO,
                                              "fueled the fire place" + Items.getItem(accompanyingFurnace).getTemplate().getName() + "@" + " " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + "with " + Items.getItem(fuelStorageToEdit).getFirstContainedItem().getTemplate().getName());
@@ -102,7 +104,7 @@ public class RefillHandler
 
 
 //new
-*/    public static void Refill2(Item item) ///TODO find out if poll is item or not and where items are polled.
+    public static void Refill2(Item item) ///TODO find out if poll is item or not and where items are polled.
     {
         if (item.getTemplateId() == 180 || item.getTemplateId() == 1023 || item.getTemplateId() == 178 || item.getTemplateId() == 1178 || item.getTemplateId() == 1028)
         {

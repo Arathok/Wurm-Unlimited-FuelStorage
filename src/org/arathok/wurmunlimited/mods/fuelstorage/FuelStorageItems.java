@@ -22,7 +22,9 @@ public class FuelStorageItems {
     public static void registerFuelStorage() throws IOException
     {
         fuelStorage = new ItemTemplateBuilder("arathok.fuelStorage.fuelStorage").name("fuel storage", "fuel storage",
-                                                                                    "A box made of Wood and Iron Bars designed to have fuel items drop into a fire place automatically")
+                                                                                    "A box made of Wood and Iron Bars designed" +
+                                                                                            " to have fuel items drop into a fire place automatically." +
+                                                                                            "Its big enough for anything smaller than a log it seems.")
                 .modelName("model.fuelStorage.fuelStorage")
                 .imageNumber((short) IconConstants.ICON_SMALL_CRATE)
                 .itemTypes(new short[] {
