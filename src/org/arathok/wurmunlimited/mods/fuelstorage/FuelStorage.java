@@ -33,7 +33,11 @@ public class FuelStorage
         @Override
         public void configure(Properties properties) {
                 Config.classhook=Boolean.parseBoolean(properties.getProperty("classhook","false"));
-
+              Config.refuelForges=Boolean.parseBoolean(properties.getProperty("refuelForges","true"));
+              Config.refuelOvens=Boolean.parseBoolean(properties.getProperty("refuelOvens","true"));
+              Config.refuelSmelters=Boolean.parseBoolean(properties.getProperty("refuelSmelters","true"));
+              Config.refuelKilns=Boolean.parseBoolean(properties.getProperty("refuelKilns","true"));
+              Config.refuelStills=Boolean.parseBoolean(properties.getProperty("refuelStills","true"));
         }
 
         @Override

@@ -66,16 +66,16 @@ public class RefillHandler
 
                              tp = Items.getItem(fuelStorageToEdit).getTilePos();
 
-                             if (Items.getItem(fuelStorageToEdit).isOnSurface())
+                             if (Items.getItem(fuelStorageToEdit).isOnSurface()){
                                  for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
-                                     if (oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 1178||oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 180||oneItem.getTemplateId() == 1023||oneItem.getTemplateId() == 1028) {
+                                     if((oneItem.getTemplateId() == 178&&Config.refuelOvens)||(oneItem.getTemplateId() == 1178&&Config.refuelStills)||(oneItem.getTemplateId() == 180&&Config.refuelForges)||(oneItem.getTemplateId() == 1023&&Config.refuelKilns)||(oneItem.getTemplateId() == 1028&&Config.refuelSmelters))
                                          accompanyingFurnace = oneItem.getWurmId();
                                          break;
                                      }
                                  }
                              else
-                                 for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
-                                     if (oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 1178||oneItem.getTemplateId() == 178||oneItem.getTemplateId() == 180||oneItem.getTemplateId() == 1023||oneItem.getTemplateId() == 1028) {
+                                 for (Item oneItem : Zones.getTileOrNull(tp, false).getItems()) {
+                                     if ((oneItem.getTemplateId() == 178&&Config.refuelOvens)||(oneItem.getTemplateId() == 1178&&Config.refuelStills)||(oneItem.getTemplateId() == 180&&Config.refuelForges)||(oneItem.getTemplateId() == 1023&&Config.refuelKilns)||(oneItem.getTemplateId() == 1028&&Config.refuelSmelters)) {
                                          accompanyingFurnace = oneItem.getWurmId();
                                          break;
                                      }
@@ -83,7 +83,7 @@ public class RefillHandler
 
                              if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)
 
-                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 2000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && Items.getItem(fuelStorageToEdit).getFirstContainedItem() != null) {
+                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && Items.getItem(fuelStorageToEdit).getFirstContainedItem() != null) {
                                      FuelStorage.logger.log(Level.INFO,
                                              "fueled the fire place" + Items.getItem(accompanyingFurnace).getTemplate().getName() + "@" + " " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + "with " + Items.getItem(fuelStorageToEdit).getFirstContainedItem().getTemplate().getName());
                                      double newTemp = (Items.getItem(fuelStorageToEdit).getFirstContainedItem().getWeightGrams() * Item.fuelEfficiency(Items.getItem(fuelStorageToEdit).getFirstContainedItem().getMaterial()));

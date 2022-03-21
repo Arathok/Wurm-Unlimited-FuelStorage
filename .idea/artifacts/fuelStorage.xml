@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="fuelStorage">
-    <output-path>$PROJECT_DIR$/../../../../../GAMES/steam/steamapps/common/Wurm Unlimited Dedicated Server/mods/fuelStorage</output-path>
+    <output-path>D:/Spiele/Steam/steamapps/common/Wurm Unlimited Dedicated Server/mods/fuelStorage</output-path>
     <root id="archive" name="fuelStorage.jar">
       <element id="module-output" name="FuelStorage" />
       <element id="directory" name="META-INF">
