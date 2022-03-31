@@ -127,7 +127,13 @@ public class FuelStorage
         }
 
         @Override
-        public boolean onPlayerMessage(Communicator arg0, String arg1) {
+        public boolean onPlayerMessage(Communicator communicator, String message) {
+                if (message != null&&message.startsWith("#FuelStorageVersion"))
+                {
+
+                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.2 ");
+
+                }
             // TODO Auto-generated method stub
             return false;
         }
@@ -151,6 +157,7 @@ public class FuelStorage
         public void onServerStarted() {
             // TODO Auto-generated method stub
 
+                 RefillHandler refillHandler = new RefillHandler();
 
         }
 

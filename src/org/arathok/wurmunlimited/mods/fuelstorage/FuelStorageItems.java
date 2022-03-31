@@ -44,10 +44,11 @@ public class FuelStorageItems {
 
         fuelStorageId = fuelStorage.getTemplateId();
         CreationEntryCreator
-                .createAdvancedEntry(SkillList.SMITHING_BLACKSMITHING, ItemList.crateSmall, ItemList.nailsIronLarge, fuelStorageId, true, true, 0.0f, false, false,
+                .createAdvancedEntry(SkillList.SMITHING_BLACKSMITHING, ItemList.plank, ItemList.nailsIronLarge, fuelStorageId, true, true, 0.0f, false, false,
                                      CreationCategories.STORAGE)
                 .addRequirement(new CreationRequirement(1, ItemList.nailsIronLarge, 8, true))
-                .addRequirement(new CreationRequirement(2, ItemList.fenceBars, 3, true));
+                .addRequirement(new CreationRequirement(2, ItemList.plank, 10, true))
+                .addRequirement(new CreationRequirement(3, ItemList.fenceBars, 3, true));
     }
 
 

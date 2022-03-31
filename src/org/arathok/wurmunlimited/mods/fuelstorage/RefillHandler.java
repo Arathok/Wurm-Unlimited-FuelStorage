@@ -83,14 +83,16 @@ public class RefillHandler
 
                              if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)
 
-                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && Items.getItem(fuelStorageToEdit).getFirstContainedItem() != null) {
+                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !Items.getItem(fuelStorageToEdit).getItems().isEmpty()) {
+                                     Item[] itemsInFuelStorage = Items.getItem(fuelStorageToEdit).getItemsAsArray();
                                      FuelStorage.logger.log(Level.INFO,
-                                             "fueled the fire place" + Items.getItem(accompanyingFurnace).getTemplate().getName() + "@" + " " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + "with " + Items.getItem(fuelStorageToEdit).getFirstContainedItem().getTemplate().getName());
-                                     double newTemp = (Items.getItem(fuelStorageToEdit).getFirstContainedItem().getWeightGrams() * Item.fuelEfficiency(Items.getItem(fuelStorageToEdit).getFirstContainedItem().getMaterial()));
+                                             "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() + "@" + " " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + "with " + itemsInFuelStorage[0].getTemplate().getName());
+
+                                     double newTemp = (itemsInFuelStorage[0].getWeightGrams() * Item.fuelEfficiency(itemsInFuelStorage[0].getMaterial()));
                                      short maxTemp = 30000;
                                      short newPTemp = (short) (int) Math.min(30000.0D, Items.getItem(accompanyingFurnace).getTemperature() + newTemp);
                                      Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
-                                     Items.destroyItem(Items.getItem(fuelStorageToEdit).getFirstContainedItem().getWurmId());
+                                     Items.destroyItem(itemsInFuelStorage[0].getWurmId());
 
 
                                  }
