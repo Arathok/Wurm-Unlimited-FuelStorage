@@ -85,14 +85,28 @@ public class RefillHandler
 
                                  if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !Items.getItem(fuelStorageToEdit).getItems().isEmpty()) {
                                      Item[] itemsInFuelStorage = Items.getItem(fuelStorageToEdit).getItemsAsArray();
-                                     FuelStorage.logger.log(Level.INFO,
-                                             "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() + "@" + " " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + "with " + itemsInFuelStorage[0].getTemplate().getName());
+                                     byte material=30;
+                                     Item itemToBurn=null;
+                                     for (Item oneItem:itemsInFuelStorage)
+                                     {
+                                         if (oneItem.getMaterial()<material)
+                                         {
+                                             material=oneItem.getMaterial();
+                                             itemToBurn=oneItem;
+                                         }
+                                     }
 
-                                     double newTemp = (itemsInFuelStorage[0].getWeightGrams() * Item.fuelEfficiency(itemsInFuelStorage[0].getMaterial()));
-                                     short maxTemp = 30000;
-                                     short newPTemp = (short) (int) Math.min(30000.0D, Items.getItem(accompanyingFurnace).getTemperature() + newTemp);
-                                     Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
-                                     Items.destroyItem(itemsInFuelStorage[0].getWurmId());
+                                     double newTemp;
+                                     if (itemToBurn!=null) {
+                                         newTemp = (itemToBurn.getWeightGrams() * Item.fuelEfficiency(material));
+                                         FuelStorage.logger.log(Level.INFO,
+                                                 "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() + "@" + " " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + "with " + itemToBurn.getTemplate().getName());
+
+
+                                         short newPTemp = (short) (int) Math.min(30000.0D, Items.getItem(accompanyingFurnace).getTemperature() + newTemp);
+                                         Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
+                                         Items.destroyItem(itemToBurn.getWurmId());
+                                     }
 
 
                                  }
