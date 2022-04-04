@@ -131,7 +131,7 @@ public class FuelStorage
                 if (message != null&&message.startsWith("#FuelStorageVersion"))
                 {
 
-                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.2 ");
+                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.4 ");
 
                 }
             // TODO Auto-generated method stub
@@ -183,6 +183,7 @@ public class FuelStorage
                         {
                                 e.printStackTrace();
                                 logger.log(Level.SEVERE,"Fuel Storage somehow got deleted?",e);
+                                RefillHandler.fuelStorages.clear();
                         }
 
                 }

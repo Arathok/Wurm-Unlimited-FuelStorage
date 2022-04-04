@@ -3,9 +3,6 @@
     <output-path>D:/Spiele/Steam/steamapps/common/Wurm Unlimited Dedicated Server/mods/fuelStorage</output-path>
     <root id="archive" name="fuelStorage.jar">
       <element id="module-output" name="FuelStorage" />
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
-      </element>
     </root>
   </artifact>
 </component>

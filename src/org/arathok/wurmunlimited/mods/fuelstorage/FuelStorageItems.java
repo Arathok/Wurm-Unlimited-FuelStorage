@@ -35,10 +35,10 @@ public class FuelStorageItems {
                         ItemTypes.ITEM_TYPE_REPAIRABLE,
                         // ItemTypes.ITEM_TYPE_TRANSPORTABLE,
                         ItemTypes.ITEM_TYPE_HOLLOW,
-                        ItemTypes.ITEM_TYPE_METAL,
 
 
-                }).decayTime(9072000L).dimensions(100, 100, 100).weightGrams(5000).material(Materials.MATERIAL_IRON)
+
+                }).decayTime(9072000L).dimensions(200, 200, 200).weightGrams(5000).material(Materials.MATERIAL_IRON)
                 .behaviourType((short) 1).primarySkill(SkillList.ALCHEMY_NATURAL).difficulty(10) // no hard lock
                 .build();
 
