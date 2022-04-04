@@ -1,5 +1,6 @@
 # FuelStorage
- Adds containers for fuel as an addon to your forges/kilns/ovens etc. Refills the heater when the fire is about to go out
+ Adds containers for fuel as an addon to your forges/kilns/ovens etc. Refills the heater when the fire is about to go out (keeps metal items at glowing hot)
+NEEDS to be placed on the same tile as the heater
 fuel Storage model done by Axeblade
 coding help by bdew
 
