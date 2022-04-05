@@ -158,7 +158,7 @@ public class FuelStorage
             // TODO Auto-generated method stub
 
                  RefillHandler refillHandler = new RefillHandler();
-                 RefillHandler.PollFurnaces();
+                 //RefillHandler.PollFurnaces();
         }
 
 
