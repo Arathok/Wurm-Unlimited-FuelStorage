@@ -24,7 +24,7 @@ public class FuelStorageItems {
         fuelStorage = new ItemTemplateBuilder("arathok.fuelStorage.fuelStorage").name("fuel storage", "fuel storage",
                                                                                     "A box made of Wood and Iron Bars designed" +
                                                                                             " to have fuel items drop into a fire place automatically." +
-                                                                                            "Its big enough for anything smaller than a log it seems.")
+                                                                                            "For it to work you need to open its feeders flap. If you want it to stop feeding fuel to the fire close the feeders flap.")
                 .modelName("model.fuelStorage.fuelStorage.")
                 .imageNumber((short) IconConstants.ICON_SMALL_CRATE)
                 .itemTypes(new short[] {
