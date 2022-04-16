@@ -131,9 +131,11 @@ public class FuelStorage
                 if (message != null&&message.startsWith("#FuelStorageVersion"))
                 {
 
-                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.4 ");
+                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.6 ");
 
                 }
+                if (message != null&&message.startsWith("#FuelStorageScan"))
+                RefillHandler.PollFurnaces();
             // TODO Auto-generated method stub
             return false;
         }
@@ -157,8 +159,9 @@ public class FuelStorage
         public void onServerStarted() {
             // TODO Auto-generated method stub
 
-                 RefillHandler refillHandler = new RefillHandler();
-                 //RefillHandler.PollFurnaces();
+                RefillHandler refillHandler = new RefillHandler();
+                ModActions.registerBehaviourProvider(new FuelStorageBehavior());
+
         }
 
 

@@ -39,7 +39,7 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
     }
 
     public static boolean canUse(Creature performer, Item target) {
-        return performer.isPlayer() && target.getLastOwnerId() == performer.getWurmId() && !target.isTraded();
+        return performer.isPlayer()  && !target.isTraded() ;
     }
 
     @Override

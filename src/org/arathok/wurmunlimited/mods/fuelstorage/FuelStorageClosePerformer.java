@@ -39,7 +39,7 @@ public class FuelStorageClosePerformer implements ActionPerformer {
     }
 
     public static boolean canUse(Creature performer, Item target) {
-        return performer.isPlayer() && target.getLastOwnerId() == performer.getWurmId() && !target.isTraded();
+        return performer.isPlayer() && !target.isTraded();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FuelStorageClosePerformer implements ActionPerformer {
 
         }
         if(RefillHandler.fuelStorages.contains(target.getWurmId())) {
-            performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage");
+            performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage");
             FuelStorage.logger.log(Level.INFO,performer.getName() + " closed their fuel storages feeder at "+ target.getTileX()+" "+ target.getTileY()+ ", thus removing it from the AutoRefuel list");
             RefillHandler.fuelStorages.remove(target.getWurmId());
         }
