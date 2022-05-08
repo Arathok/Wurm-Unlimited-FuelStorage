@@ -16,7 +16,7 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
 
 
     public FuelStorageOpenPerformer() {
-        actionEntry = new ActionEntryBuilder((short) ModActions.getNextActionId(), "open feeder", "opening",
+        actionEntry = new ActionEntryBuilder((short) ModActions.getNextActionId(), "Open feeder", "opening",
                 new int[]{
                         6 /* ACTION_TYPE_NOMOVE */,
                         48 /* ACTION_TYPE_ENEMY_ALWAYS */,
@@ -58,6 +58,8 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
             RefillHandler.fuelStorages.add(target.getWurmId());
             FuelStorage.logger.log(Level.INFO,performer.getName() + " opened their fuel storages feeder at "+ target.getTileX()+" "+ target.getTileY()+ ", thus adding it to the AutoRefuel list");
             performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage");
+            target.setName(target.getTemplate().getName());
+            target.setName(target.getName()+" (feeder open)");
         }
         else
             performer.getCommunicator().sendSafeServerMessage("The Flap of the fuel storages feeder was already open. Weird.");

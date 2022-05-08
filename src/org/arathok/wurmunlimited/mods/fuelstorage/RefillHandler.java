@@ -7,6 +7,7 @@ import com.wurmonline.server.Items;
 import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemList;
+import com.wurmonline.server.items.Materials;
 import com.wurmonline.server.zones.Zones;
 
 import java.util.LinkedList;
@@ -52,7 +53,7 @@ public class RefillHandler
                  TilePos tp = null;
                  long time = System.currentTimeMillis();
                  long accompanyingFurnace=-10;
-                 if (time>nextrefillpoll)
+                 if (time>nextrefillpoll&&(fuelStorages.size()>0))
                  {
                      FuelStorage.logger.log(Level.INFO, "Refuelling:");
 
@@ -91,12 +92,13 @@ public class RefillHandler
 
                                  if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !Items.getItem(fuelStorageToEdit).getItems().isEmpty()) {
                                      Item[] itemsInFuelStorage = Items.getItem(fuelStorageToEdit).getItemsAsArray();
-                                     byte material=30;
+                                     byte material= Materials.MATERIAL_MAX;
                                      int weight=30000;
                                      Item itemToBurn=null;
+
                                      for (Item oneItem:itemsInFuelStorage)
                                      {
-                                         if (oneItem.getMaterial()<material)
+                                         if (oneItem.getMaterial()<material&&oneItem.isBurnable())
                                          {
 
                                              material=oneItem.getMaterial();
@@ -106,7 +108,7 @@ public class RefillHandler
 
                                      for (Item oneItem:itemsInFuelStorage)
                                      {
-                                         if (oneItem.getMaterial()==material&&oneItem.getWeightGrams()<weight)
+                                         if (oneItem.getMaterial()==material&&oneItem.getWeightGrams()<weight&&oneItem.isBurnable())
                                          {
                                              weight=oneItem.getWeightGrams();
                                              itemToBurn=oneItem;
@@ -129,6 +131,7 @@ public class RefillHandler
                                          FuelStorage.logger.log(Level.INFO,"New Temp = " + newPTemp);
                                          Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
                                          Items.destroyItem(itemToBurn.getWurmId());
+
                                      }
 
 

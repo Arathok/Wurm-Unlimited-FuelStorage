@@ -16,7 +16,7 @@ public class FuelStorageClosePerformer implements ActionPerformer {
 
 
     public FuelStorageClosePerformer() {
-        actionEntry = new ActionEntryBuilder((short) ModActions.getNextActionId(), "close feeder", "closing",
+        actionEntry = new ActionEntryBuilder((short) ModActions.getNextActionId(), "Close feeder", "closing",
                 new int[]{
                         6 /* ACTION_TYPE_NOMOVE */,
                         48 /* ACTION_TYPE_ENEMY_ALWAYS */,
@@ -58,6 +58,8 @@ public class FuelStorageClosePerformer implements ActionPerformer {
             performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage");
             FuelStorage.logger.log(Level.INFO,performer.getName() + " closed their fuel storages feeder at "+ target.getTileX()+" "+ target.getTileY()+ ", thus removing it from the AutoRefuel list");
             RefillHandler.fuelStorages.remove(target.getWurmId());
+            target.setName(target.getTemplate().getName());
+            target.setName(target.getName()+" (feeder closed)");
         }
         else
             performer.getCommunicator().sendSafeServerMessage("The Flap of the fuel storages feeder was already closed. Weird.");

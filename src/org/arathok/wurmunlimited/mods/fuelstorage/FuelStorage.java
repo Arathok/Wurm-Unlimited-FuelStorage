@@ -131,7 +131,7 @@ public class FuelStorage
                 if (message != null&&message.startsWith("#FuelStorageVersion"))
                 {
 
-                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.6 ");
+                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.7 ");
 
                 }
                 if (message != null&&message.startsWith("#FuelStorageScan"))
