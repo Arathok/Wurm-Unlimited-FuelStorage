@@ -9,6 +9,8 @@ import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPropagation;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 
+import java.sql.Ref;
+import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class FuelStorageOpenPerformer implements ActionPerformer {
@@ -56,6 +58,13 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
         }
         if(!RefillHandler.fuelStorages.contains(target.getWurmId())) {
             RefillHandler.fuelStorages.add(target.getWurmId());
+            try {
+                RefillHandler.insert(FuelStorage.dbconn,target.getWurmId());
+            } catch (SQLException e) {
+                FuelStorage.logger.severe("something went wrong with writing to the database!" + e);
+                e.printStackTrace();
+
+            }
             FuelStorage.logger.log(Level.INFO,performer.getName() + " opened their fuel storages feeder at "+ target.getTileX()+" "+ target.getTileY()+ ", thus adding it to the AutoRefuel list");
             performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage");
             target.setName(target.getTemplate().getName());

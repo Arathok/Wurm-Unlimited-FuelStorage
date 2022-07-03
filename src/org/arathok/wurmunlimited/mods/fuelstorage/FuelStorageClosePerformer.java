@@ -9,6 +9,8 @@ import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPropagation;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class FuelStorageClosePerformer implements ActionPerformer {
@@ -60,6 +62,15 @@ public class FuelStorageClosePerformer implements ActionPerformer {
             RefillHandler.fuelStorages.remove(target.getWurmId());
             target.setName(target.getTemplate().getName());
             target.setName(target.getName()+" (feeder closed)");
+            PreparedStatement psDeleteRow = null;
+            try {
+                psDeleteRow = FuelStorage.dbconn.prepareStatement("DELETE FROM FuelStorage WHERE itemId = " + target.getWurmId());
+                psDeleteRow.execute();
+            } catch (SQLException e) {
+                FuelStorage.logger.log(Level.SEVERE, "Removing item from the databse failed!", e);
+                e.printStackTrace();
+            }
+
         }
         else
             performer.getCommunicator().sendSafeServerMessage("The Flap of the fuel storages feeder was already closed. Weird.");

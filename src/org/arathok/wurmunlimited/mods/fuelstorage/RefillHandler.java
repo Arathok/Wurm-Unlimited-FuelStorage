@@ -10,6 +10,10 @@ import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.items.Materials;
 import com.wurmonline.server.zones.Zones;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -146,52 +150,35 @@ public class RefillHandler
              }
 
 
-//new
-    public static void Refill2(Item item) ///TODO find out if poll is item or not and where items are polled.
-    {
-        if (item.getTemplateId() == 180 || item.getTemplateId() == 1023 || item.getTemplateId() == 178 || item.getTemplateId() == 1178 || item.getTemplateId() == 1028)
-        {
-            TilePos tp = item.getTilePos();
+    public static void readFromSQL(Connection dbconn, List<Long> fuelStorages) throws SQLException, NoSuchItemException {
+        FuelStorage.logger.log(Level.INFO,"reading all previously opened fuelstorages from the DB");
+        long afuelStorage=0;
+        PreparedStatement ps = dbconn.prepareStatement("SELECT * FROM FuelStorage");
+        ResultSet rs=ps.executeQuery();
+        while (rs.next()) {
 
-            Item fuelStorage = null;
-            byte fuelStorageFirstMaterial;
-            if (item.isOnSurface())
 
-            for (Item oneItem : Zones.getTileOrNull(tp,true).getItems())
-            {
-                if (oneItem.getTemplate() == FuelStorageItems.fuelStorage)
-                {
-                    fuelStorage = oneItem;
-                    break;
-                }
-            }
-            else
-            {
-                for (Item oneItem : Zones.getTileOrNull(tp,false).getItems())
-                {
-                    if (oneItem.getTemplate() == FuelStorageItems.fuelStorage)
-                    {
-                        fuelStorage = oneItem;
-                        break;
-                    }
-                }
-            }
-            if (fuelStorage != null)
-            {
 
-                if (item.getTemperature() < 4000 && item.getTemperature()>1000&&fuelStorage.getFirstContainedItem() != null)
-                {
-
-                    double newTemp = (fuelStorage.getFirstContainedItem().getWeightGrams() * fuelStorage.getFirstContainedItem().getMaterial());
-                    short maxTemp = 30000;
-                    short newPTemp = (short) (int) Math.min(30000.0D, item.getTemperature() + newTemp);
-                    item.setTemperature(newPTemp);
-                    Items.destroyItem(fuelStorage.getFirstContainedItem().getWurmId());
-                }
-            }
+            afuelStorage = rs.getLong("itemId"); // liest quasi den Wert von der Spalte
+            FuelStorage.logger.log(Level.INFO,"adding: "+afuelStorage);
+            fuelStorages.add(afuelStorage);
+            Item aFuelStorageItem = Items.getItem(afuelStorage);
+            aFuelStorageItem.setName(aFuelStorageItem.getTemplate().getName() + " (feeder open)");
         }
+    }
+
+    public static void insert(Connection dbconn, long itemId) throws SQLException {
+
+        PreparedStatement ps = dbconn.prepareStatement("insert into FuelStorage (itemID) values (?)");
+        ps.setLong(1,itemId);
+
+        ps.executeUpdate();
+
+
 
     }
+
+
 
 
 }
