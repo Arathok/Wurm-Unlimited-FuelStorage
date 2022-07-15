@@ -11,6 +11,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 
 import java.sql.Ref;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 public class FuelStorageOpenPerformer implements ActionPerformer {
@@ -41,38 +42,87 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
     }
 
     public static boolean canUse(Creature performer, Item target) {
-        return performer.isPlayer()  && !target.isTraded() ;
+        return performer.isPlayer() && !target.isTraded();
     }
 
     @Override
     public boolean action(Action action, Creature performer, Item target, short num, float counter) {
-
-
-        if (!canUse(performer, target)) {
-            performer.getCommunicator().sendAlertServerMessage("You are not allowed to do that");
-            return propagate(action,
-                    ActionPropagation.FINISH_ACTION,
-                    ActionPropagation.NO_SERVER_PROPAGATION,
-                    ActionPropagation.NO_ACTION_PERFORMER_PROPAGATION);
-
-        }
-        if(!RefillHandler.fuelStorages.contains(target.getWurmId())) {
-            RefillHandler.fuelStorages.add(target.getWurmId());
-            try {
-                RefillHandler.insert(FuelStorage.dbconn,target.getWurmId());
-            } catch (SQLException e) {
-                FuelStorage.logger.severe("something went wrong with writing to the database!" + e);
-                e.printStackTrace();
+        try {
+            if (!canUse(performer, target)) {
+                performer.getCommunicator().sendAlertServerMessage("You are not allowed to do that");
+                return propagate(action,
+                        ActionPropagation.FINISH_ACTION,
+                        ActionPropagation.NO_SERVER_PROPAGATION,
+                        ActionPropagation.NO_ACTION_PERFORMER_PROPAGATION);
 
             }
-            FuelStorage.logger.log(Level.INFO,performer.getName() + " opened their fuel storages feeder at "+ target.getTileX()+" "+ target.getTileY()+ ", thus adding it to the AutoRefuel list");
-            performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage");
-            target.setName(target.getTemplate().getName());
-            target.setName(target.getName()+" (feeder open)");
-        }
-        else
-            performer.getCommunicator().sendSafeServerMessage("The Flap of the fuel storages feeder was already open. Weird.");
+            FuelStorageObject aFuelStorage = new FuelStorageObject();
+            boolean fuelStorageFound=false;
 
+            Iterator<FuelStorageObject> fuelStorageObjectIterator = RefillHandler.fuelStorages.iterator();
+            while (fuelStorageObjectIterator.hasNext()) {
+
+                aFuelStorage = fuelStorageObjectIterator.next();
+                int index = RefillHandler.fuelStorages.indexOf(aFuelStorage);
+                if (aFuelStorage.itemId == target.getWurmId()) {
+                    fuelStorageFound = true;
+                    aFuelStorage.isActive = true;
+
+                    switch ((int) aFuelStorage.targetTemp) {
+                        case 15000: {
+                            target.setName(target.getTemplate().getName() + ("feeder open, Full Blaze setting"));
+                            break;
+                        }
+
+                        case 9000: {
+                            target.setName(target.getTemplate().getName() + ("feeder open, Wild Flames setting"));
+                            break;
+                        }
+
+                        case 7000: {
+                            target.setName(target.getTemplate().getName() + ("feeder open, Small Flames setting"));
+                            break;
+                        }
+
+                        case 5000: {
+                            target.setName(target.getTemplate().getName() + ("feeder open, Few Flames setting"));
+                            break;
+                        }
+
+                        case 3000: {
+                            target.setName(target.getTemplate().getName() + ("feeder open, Glowing Coals setting"));
+                            break;
+                        }
+
+
+                    }
+
+                    RefillHandler.fuelStorages.set(index, aFuelStorage);
+                    RefillHandler.update(FuelStorage.dbconn, aFuelStorage);
+                }
+            }
+
+            if (!fuelStorageFound)
+            {
+                aFuelStorage.itemId = target.getWurmId();
+                aFuelStorage.isActive = true;
+                aFuelStorage.targetTemp = 4000;
+                RefillHandler.fuelStorages.add(aFuelStorage);
+
+                RefillHandler.insert(FuelStorage.dbconn, aFuelStorage);
+
+                FuelStorage.logger.log(Level.INFO, performer.getName() + " opened their fuel storages feeder at " + target.getTileX() + " " + target.getTileY() + ", thus adding it to the AutoRefuel list");
+                performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage. You notice the slider of the feeder is set up so, that it will refill the fire to keep a glowing bed of coals");
+                target.setName(target.getTemplate().getName());
+                target.setName(target.getName() + " (feeder open, slider setting: keep glowing coals)");
+            }
+
+
+
+        } catch (SQLException throwables) {
+            FuelStorage.logger.severe("something went wrong with writing to the database!" + throwables);
+            throwables.printStackTrace();
+        }
         return propagate(action,
                 ActionPropagation.FINISH_ACTION,
                 ActionPropagation.NO_SERVER_PROPAGATION,

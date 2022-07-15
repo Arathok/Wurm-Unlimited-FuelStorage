@@ -25,32 +25,9 @@ public class RefillHandler
 
             public static long nextpoll=0;
             public static long nextrefillpoll=0;
-            public static List<Long> fuelStorages = new LinkedList<>();
-
-            public static void PollFurnaces()
-            {
-                long time= System.currentTimeMillis();
-                Item[] allItems;
+            public static List<FuelStorageObject> fuelStorages = new LinkedList<>();
 
 
-                if (time > nextpoll)
-                {
-                    allItems = Items.getAllItems();
-                    for (Item oneItem : allItems)
-                    {
-                        if (oneItem.getTemplate() == FuelStorageItems.fuelStorage&&oneItem.getParentOrNull()==null )
-                        {
-                            if (!fuelStorages.contains(oneItem.getWurmId())) {
-                                fuelStorages.add(oneItem.getWurmId());
-                                FuelStorage.logger.log(Level.INFO, "Polling Fireplaces. Found " + fuelStorages.size() + " firing Places");
-                            }
-                        }
-                    }
-                    nextpoll=time+300000;
-                }
-
-            }
- // OLD
 
             public static void Refill() throws NoSuchItemException
             {
@@ -150,30 +127,65 @@ public class RefillHandler
              }
 
 
-    public static void readFromSQL(Connection dbconn, List<Long> fuelStorages) throws SQLException, NoSuchItemException {
+    public static void readFromSQL(Connection dbconn, List<FuelStorageObject> fuelStorages) throws SQLException, NoSuchItemException {
         FuelStorage.logger.log(Level.INFO,"reading all previously opened fuelstorages from the DB");
-        long afuelStorage=0;
-        PreparedStatement ps = dbconn.prepareStatement("SELECT * FROM FuelStorage");
-        ResultSet rs=ps.executeQuery();
-        while (rs.next()) {
+
+        try {
+            PreparedStatement ps = dbconn.prepareStatement("SELECT * FROM FuelStorage");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
 
 
+                FuelStorageObject afuelStorageObject = new FuelStorageObject();
+                afuelStorageObject.itemId = rs.getLong("itemId"); // liest quasi den Wert von der Spalte
+                afuelStorageObject.targetTemp = rs.getLong("targetTemp"); // liest quasi den Wert von der Spalte
+                afuelStorageObject.isActive = rs.getBoolean("isActive"); // liest quasi den Wert von der Spalte
+                FuelStorage.logger.log(Level.INFO, "adding: " + afuelStorageObject.itemId);
+                fuelStorages.add(afuelStorageObject);
 
-            afuelStorage = rs.getLong("itemId"); // liest quasi den Wert von der Spalte
-            FuelStorage.logger.log(Level.INFO,"adding: "+afuelStorage);
-            fuelStorages.add(afuelStorage);
-            Item aFuelStorageItem = Items.getItem(afuelStorage);
-            aFuelStorageItem.setName(aFuelStorageItem.getTemplate().getName() + " (feeder open)");
+                Item aFuelStorageItem = Items.getItem(afuelStorageObject.itemId);
+                aFuelStorageItem.setName(aFuelStorageItem.getTemplate().getName() + " (feeder open)");
+            }
+            rs.close();
+        } catch (SQLException throwables) {
+            FuelStorage.logger.log(Level.SEVERE,"something went wrong writing to the DB!",throwables);
+            throwables.printStackTrace();
+        } catch (NoSuchItemException e) {
+            FuelStorage.logger.log(Level.SEVERE,"no item found for this ID",e);
+            e.printStackTrace();
         }
+
     }
 
-    public static void insert(Connection dbconn, long itemId) throws SQLException {
+    public static void insert(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
+        try {
+            PreparedStatement ps = dbconn.prepareStatement("insert into FuelStorage (itemID,targetTemp,isActive) values (?,?,?)");
+            ps.setLong(1, aFuelStorage.itemId);
+            ps.setLong(2, aFuelStorage.targetTemp);
+            ps.setBoolean(3, aFuelStorage.isActive);
 
-        PreparedStatement ps = dbconn.prepareStatement("insert into FuelStorage (itemID) values (?)");
-        ps.setLong(1,itemId);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException throwables) {
+            FuelStorage.logger.log(Level.SEVERE,"something went wrong writing to the DB!",throwables);
+            throwables.printStackTrace();
+        }
 
-        ps.executeUpdate();
 
+    }
+
+    public static void update(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
+        try {
+            PreparedStatement ps = dbconn.prepareStatement("update FuelStorage UPDATE FuelStorage SET  isActive = ? WHERE id = ?");
+            ps.setBoolean(1, aFuelStorage.isActive);
+            ps.setLong(2, aFuelStorage.itemId);
+
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException throwables) {
+            FuelStorage.logger.log(Level.SEVERE,"something went wrong writing to the DB!",throwables);
+            throwables.printStackTrace();
+        }
 
 
     }

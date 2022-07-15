@@ -51,86 +51,7 @@ public class FuelStorage
         public void preInit() {
 
             ModActions.init();
-            if (Config.classhook)
-                try {
-                        ClassPool classPool = HookManager.getInstance().getClassPool();
-                        CtClass ctItems = classPool.get("com.wurmonline.server.items.Item");
 
-                        ctItems.getMethod("coolOutSideItem", "(ZZ)V")
-                                .insertAfter("org.arathok.wurmunlimited.mods.fuelstorage.RefillHandler.Refill2();");
-                        /*
-                        private void coolOutSideItem(boolean everySecond, boolean insideStructure) {
-    if (this.temperature > 200) {
-      float speed = 1.0F;
-      if (insideStructure) {
-        speed *= 0.75F;
-      } else if (Server.getWeather().getRain() > 0.2D) {
-        speed *= 2.0F;
-      }
-      if (getRarity() > 0)
-        speed = (float)(speed * Math.pow(0.8999999761581421D, getRarity()));
-      int templateId = this.template.getTemplateId();
-      if (getSpellEffects() != null)
-        if (templateId == 180 || templateId == 1023 || templateId == 1028 || templateId == 1178 || templateId == 37 || templateId == 178)
-          if (Server.rand.nextFloat() < getSpellEffects().getRuneEffect(RuneUtilities.ModifierEffect.ENCH_FUELUSE) - 1.0F)
-            speed = 0.0F;
-      if (getTemplateId() == 180 || getTemplateId() == 178 ||
-        getTemplateId() == 1023 || getTemplateId() == 1028) {
-        if (System.currentTimeMillis() - 60000L > this.lastAuxPoll)
-          if (getTemperature() > 200 && getAuxData() < 30) {
-            setAuxData((byte)(getAuxData() + 1));
-            this.lastAuxPoll = System.currentTimeMillis();
-          }
-        if (getAuxData() > 30)
-          setAuxData((byte)30);
-      }
-      if (templateId == 180 || templateId == 1023 || templateId == 1028) {
-        setTemperature((short)(int)Math.max(200.0F, this.temperature - speed *
-              Math.max(1.0F, 11.0F - Math.max(1.0F, 20.0F * Math.max(30.0F, getCurrentQualityLevel()) / 200.0F))));
-      } else if (templateId == 1178) {
-        setTemperature((short)(int)Math.max(200.0F, this.temperature - speed * 0.5F *
-              Math.max(1.0F, 11.0F - Math.max(1.0F, 10.0F * Math.max(30.0F, getCurrentQualityLevel()) / 200.0F))));
-      } else if (templateId == 37 || templateId == 178) {
-        setTemperature((short)(int)Math.max(200.0F, this.temperature - speed *
-              Math.max(1.0F, 11.0F - Math.max(1.0F, 10.0F * Math.max(30.0F, getCurrentQualityLevel()) / 200.0F))));
-        if (templateId == 37)
-          if (this.temperature <= 210) {
-            if (getItems().isEmpty()) {
-              float ql = getCurrentQualityLevel();
-              try {
-                ItemFactory.createItem(141, ql, getPosX(), getPosY(), getRotation(), isOnSurface(),
-                    getRarity(), getBridgeId(), null);
-              } catch (NoSuchTemplateException nst) {
-                logWarn("No template for ash?" + nst.getMessage(), (Throwable)nst);
-              } catch (FailedException fe) {
-                logWarn("What's this: " + fe.getMessage(), (Throwable)fe);
-              }
-            }
-            setQualityLevel(0.0F);
-            deleteFireEffect();
-          }
-      } else if ((isLight() && !isLightOverride()) || isFireplace() ||
-        getTemplateId() == 1243 || getTemplateId() == 1301) {
-        pollLightSource();
-      } else if (everySecond) {
-        setTemperature((short)(int)Math.max(200.0F, this.temperature - speed * 20.0F));
-      } else {
-        setTemperature((short)(int)Math.max(200.0F, this.temperature - speed * 800.0F * 5.0F));
-      }
-    }
-    if (!isOnFire())
-      if (isStreetLamp() || isBrazier() || isFireplace() || getTemplateId() == 1301) {
-        checkIfLightStreetLamp();
-      } else {
-        deleteFireEffect();
-      }
-  }
-                         */
-
-                } catch (Exception e) {
-                        logger.log(Level.SEVERE,"something went wrong while hooking into the target class",e);
-                        throw new HookException(e);
-                }
         }
 
         @Override
@@ -138,11 +59,10 @@ public class FuelStorage
                 if (message != null&&message.startsWith("#FuelStorageVersion"))
                 {
 
-                        communicator.sendSafeServerMessage("You are on FuelStorage Version 2.9 ");
+                        communicator.sendSafeServerMessage("You are on FuelStorage Version 3.0 ");
 
                 }
-                if (message != null&&message.startsWith("#FuelStorageScan"))
-                RefillHandler.PollFurnaces();
+
             // TODO Auto-generated method stub
             return false;
         }
@@ -172,7 +92,7 @@ public class FuelStorage
                         // if not, create the table and update it with the server's last crop poll time
                         if (!ModSupportDb.hasTable(dbconn, "FuelStorage")) {
                                 // table create
-                                try (PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorage (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0)")) {
+                                try (PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorage (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000), isActive BOOLEAN NOT NULL DEFAULT false")) {
                                         ps.execute();
 
                                 }
