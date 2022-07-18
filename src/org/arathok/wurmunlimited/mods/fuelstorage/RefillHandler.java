@@ -36,20 +36,21 @@ public class RefillHandler
                  long accompanyingFurnace=-10;
                  if (time>nextrefillpoll&&(fuelStorages.size()>0))
                  {
-                     FuelStorage.logger.log(Level.INFO, "Refuelling:");
+                     FuelStorage.logger.log(Level.INFO, "Refuelling furnaces:");
 
-                     for (long fuelStorageToEdit : fuelStorages) {
+                     for (FuelStorageObject fuelStorageToEdit : fuelStorages) {
 
-                         if (Items.getItem(fuelStorageToEdit) == null)
+                         if (Items.getItem(fuelStorageToEdit.itemId) == null)
                              fuelStorages.remove(fuelStorageToEdit);
                          else {
 
-                         if (Items.getItem(fuelStorageToEdit).getTemperature()>200)
-                             Items.getItem(fuelStorageToEdit).setTemperature((short) 100);
+                             Item fuelStorageToEditItem = Items.getItem(fuelStorageToEdit.itemId);
+                         if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)
+                             fuelStorageToEditItem.setTemperature((short) 100);
 
-                             tp = Items.getItem(fuelStorageToEdit).getTilePos();
+                             tp = fuelStorageToEditItem.getTilePos();
 
-                             if (Items.getItem(fuelStorageToEdit).isOnSurface()) {
+                             if (fuelStorageToEditItem.isOnSurface()) {
                                  for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
                                      if ((oneItem.getTemplateId() == 178 && Config.refuelOvens) || (oneItem.getTemplateId() == ItemList.still && Config.refuelStills) || (oneItem.getTemplateId() == 180 && Config.refuelForges) || (oneItem.getTemplateId() == 1023 && Config.refuelKilns) || (oneItem.getTemplateId() == 1028 && Config.refuelSmelters)) {
                                          accompanyingFurnace = oneItem.getWurmId();
@@ -71,8 +72,8 @@ public class RefillHandler
 
                              if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)
 
-                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !Items.getItem(fuelStorageToEdit).getItems().isEmpty()) {
-                                     Item[] itemsInFuelStorage = Items.getItem(fuelStorageToEdit).getItemsAsArray();
+                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !fuelStorageToEditItem.getItems().isEmpty()) {
+                                     Item[] itemsInFuelStorage = fuelStorageToEditItem.getItemsAsArray();
                                      byte material= Materials.MATERIAL_MAX;
                                      int weight=30000;
                                      Item itemToBurn=null;
@@ -174,18 +175,33 @@ public class RefillHandler
 
     }
 
-    public static void update(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
+    public static void updateStatus(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
         try {
-            PreparedStatement ps = dbconn.prepareStatement("update FuelStorage UPDATE FuelStorage SET  isActive = ? WHERE id = ?");
+            PreparedStatement ps = dbconn.prepareStatement("UPDATE FuelStorage SET  isActive = ? WHERE id = ?");
             ps.setBoolean(1, aFuelStorage.isActive);
             ps.setLong(2, aFuelStorage.itemId);
 
             ps.executeUpdate();
             ps.close();
         } catch (SQLException throwables) {
-            FuelStorage.logger.log(Level.SEVERE,"something went wrong writing to the DB!",throwables);
+            FuelStorage.logger.log(Level.SEVERE, "something went wrong writing to the DB!", throwables);
             throwables.printStackTrace();
         }
+
+    }
+
+        public static void updateTemp(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
+            try {
+                PreparedStatement ps = dbconn.prepareStatement("UPDATE FuelStorage SET  targetTemp = ? WHERE id = ?");
+                ps.setLong(1, aFuelStorage.targetTemp);
+                ps.setLong(2, aFuelStorage.itemId);
+
+                ps.executeUpdate();
+                ps.close();
+            } catch (SQLException throwables) {
+                FuelStorage.logger.log(Level.SEVERE,"something went wrong writing to the DB!",throwables);
+                throwables.printStackTrace();
+            }
 
 
     }

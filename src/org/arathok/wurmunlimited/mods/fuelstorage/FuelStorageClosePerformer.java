@@ -11,6 +11,7 @@ import org.gotti.wurmunlimited.modsupport.actions.ModActions;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 public class FuelStorageClosePerformer implements ActionPerformer {
@@ -56,28 +57,51 @@ public class FuelStorageClosePerformer implements ActionPerformer {
                     ActionPropagation.NO_ACTION_PERFORMER_PROPAGATION);
 
         }
-        if(RefillHandler.fuelStorages.contains(target.getWurmId())) {
-            performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage");
-            FuelStorage.logger.log(Level.INFO,performer.getName() + " closed their fuel storages feeder at "+ target.getTileX()+" "+ target.getTileY()+ ", thus removing it from the AutoRefuel list");
-            RefillHandler.fuelStorages.remove(target.getWurmId());
-            target.setName(target.getTemplate().getName());
-            target.setName(target.getName()+" (feeder closed)");
-            PreparedStatement psDeleteRow = null;
-            try {
-                psDeleteRow = FuelStorage.dbconn.prepareStatement("DELETE FROM FuelStorage WHERE itemId = " + target.getWurmId());
-                psDeleteRow.execute();
-            } catch (SQLException e) {
-                FuelStorage.logger.log(Level.SEVERE, "Removing item from the databse failed!", e);
-                e.printStackTrace();
+
+        try {
+
+            FuelStorageObject aFuelStorage = new FuelStorageObject();
+            boolean fuelStorageFound = false;
+
+            Iterator<FuelStorageObject> fuelStorageObjectIterator = RefillHandler.fuelStorages.iterator();
+            while (fuelStorageObjectIterator.hasNext()) {
+
+                aFuelStorage = fuelStorageObjectIterator.next();
+                int index = RefillHandler.fuelStorages.indexOf(aFuelStorage);
+                if (aFuelStorage.itemId == target.getWurmId()) {
+                    fuelStorageFound = true;
+                    aFuelStorage.isActive = false;
+
+
+
+                    RefillHandler.fuelStorages.set(index, aFuelStorage);
+                    RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
+
+                    FuelStorage.logger.log(Level.INFO, performer.getName() + " closed their fuel storages feeder at " + target.getTileX() + " " + target.getTileY() + ", thus removing it from the AutoRefuel list");
+                    performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage. Its temperature setting will stay as is");
+                    target.setName(target.getTemplate().getName());
+                    target.setName(target.getName() + " (feeder closed)");
+
+                }
             }
 
+            if (!fuelStorageFound) {
+
+                FuelStorage.logger.log(Level.INFO, performer.getName() + " tried to close flap but it didn't exist on the list! " + target.getTileX() + " " + target.getTileY() + ", thus removing it from the AutoRefuel list");
+                performer.getCommunicator().sendSafeServerMessage("You try to close the fuel storages flap but it appears to be already closed. Weird");
+            }
+
+
         }
-        else
-            performer.getCommunicator().sendSafeServerMessage("The Flap of the fuel storages feeder was already closed. Weird.");
+     catch(SQLException throwables){
+            FuelStorage.logger.severe("something went wrong with writing to the database!" + throwables);
+            throwables.printStackTrace();
+        }
 
         return propagate(action,
                 ActionPropagation.FINISH_ACTION,
                 ActionPropagation.NO_SERVER_PROPAGATION,
                 ActionPropagation.NO_ACTION_PERFORMER_PROPAGATION);
     }
+
 }

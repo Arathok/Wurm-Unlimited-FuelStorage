@@ -98,7 +98,7 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
                     }
 
                     RefillHandler.fuelStorages.set(index, aFuelStorage);
-                    RefillHandler.update(FuelStorage.dbconn, aFuelStorage);
+                    RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
                 }
             }
 
