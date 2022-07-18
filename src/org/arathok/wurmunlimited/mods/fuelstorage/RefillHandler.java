@@ -42,10 +42,11 @@ public class RefillHandler
 
                          if (Items.getItem(fuelStorageToEdit.itemId) == null)
                              fuelStorages.remove(fuelStorageToEdit);
-                         else {
-
+                         else
+                             if (fuelStorageToEdit.isActive)
+                             {
                              Item fuelStorageToEditItem = Items.getItem(fuelStorageToEdit.itemId);
-                         if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)
+                             if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)
                              fuelStorageToEditItem.setTemperature((short) 100);
 
                              tp = fuelStorageToEditItem.getTilePos();
