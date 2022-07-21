@@ -161,7 +161,7 @@ public class RefillHandler
 
     public static void insert(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
         try {
-            PreparedStatement ps = dbconn.prepareStatement("insert into FuelStorage (itemID,targetTemp,isActive) values (?,?,?)");
+            PreparedStatement ps = dbconn.prepareStatement("upsert into FuelStorage (itemID,targetTemp,isActive) values (?,?,?)");
             ps.setLong(1, aFuelStorage.itemId);
             ps.setLong(2, aFuelStorage.targetTemp);
             ps.setBoolean(3, aFuelStorage.isActive);
