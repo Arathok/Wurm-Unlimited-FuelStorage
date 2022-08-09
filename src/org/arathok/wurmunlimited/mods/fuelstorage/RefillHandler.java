@@ -34,19 +34,22 @@ public class RefillHandler
                  TilePos tp = null;
                  long time = System.currentTimeMillis();
                  long accompanyingFurnace=-10;
-                 if (time>nextrefillpoll&&(fuelStorages.size()>0))
+                 if (time>nextrefillpoll&&(fuelStorages.size()>0))          // if poll time is reached and there is any registered fuelStorage start teh refill routine
                  {
                      FuelStorage.logger.log(Level.INFO, "Refuelling furnaces:");
 
-                     for (FuelStorageObject fuelStorageToEdit : fuelStorages) {
+                     for (FuelStorageObject fuelStorageToEdit : fuelStorages) { // from a list of all fuelstorages go through each one
 
-                         if (Items.getItem(fuelStorageToEdit.itemId) == null)
+                         if (Items.getItem(fuelStorageToEdit.itemId) == null)   // make sure it actually exists if not remove it from the list
+                         {
                              fuelStorages.remove(fuelStorageToEdit);
+                             FuelStorage.logger.log(Level.INFO, "fuelStorage: "+fuelStorageToEdit.itemId+ " does not exist anymore, weird! Deleting it from the list.");
+                     }
                          else
-                             if (fuelStorageToEdit.isActive)
+                             if (fuelStorageToEdit.isActive)    // is the fuel storage even turned on? if yes check if the accompanying furnace is lit
                              {
                              Item fuelStorageToEditItem = Items.getItem(fuelStorageToEdit.itemId);
-                             if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)
+                             if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)  // check if there is fuel left make sure the fuel
                              fuelStorageToEditItem.setTemperature((short) 100);
 
                              tp = fuelStorageToEditItem.getTilePos();
