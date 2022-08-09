@@ -73,7 +73,7 @@ public class RefillHandler
 
                              if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)
 
-                                 if (Items.getItem(accompanyingFurnace).getTemperature() < 4000 && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !fuelStorageToEditItem.getItems().isEmpty()) {
+                                 if (Items.getItem(accompanyingFurnace).getTemperature() < fuelStorageToEdit.targetTemp && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !fuelStorageToEditItem.getItems().isEmpty()) {
                                      Item[] itemsInFuelStorage = fuelStorageToEditItem.getItemsAsArray();
                                      byte material= Materials.MATERIAL_MAX;
                                      int weight=30000;
