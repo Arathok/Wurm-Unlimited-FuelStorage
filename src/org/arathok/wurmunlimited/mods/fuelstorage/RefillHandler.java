@@ -49,10 +49,10 @@ public class RefillHandler
                              if (fuelStorageToEdit.isActive)    // is the fuel storage even turned on? if yes check if the accompanying furnace is lit
                              {
                              Item fuelStorageToEditItem = Items.getItem(fuelStorageToEdit.itemId);
-                             if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)  // check if there is fuel left make sure the fuel
+                             if (fuelStorageToEditItem.getTemperature()>200&&fuelStorageToEditItem.getItemsAsArray().length>0)  // check if there is fuel left if yes make sure it does not burn inside the fuel Storage
                              fuelStorageToEditItem.setTemperature((short) 100);
 
-                             tp = fuelStorageToEditItem.getTilePos();
+                             tp = fuelStorageToEditItem.getTilePos();   //get the tile pos and make sure that an underground fuel Storage does not fuel a surface furnace and vice versa
 
                              if (fuelStorageToEditItem.isOnSurface()) {
                                  for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
@@ -74,7 +74,7 @@ public class RefillHandler
                                      }
                                  }
 
-                             if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)
+                             if (accompanyingFurnace!=-10 &&accompanyingFurnace!=0)     // if there is a furnace found on the same tile check for the target temp
 
                                  if (Items.getItem(accompanyingFurnace).getTemperature() < fuelStorageToEdit.targetTemp && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !fuelStorageToEditItem.getItems().isEmpty()) {
                                      Item[] itemsInFuelStorage = fuelStorageToEditItem.getItemsAsArray();
@@ -82,7 +82,7 @@ public class RefillHandler
                                      int weight=30000;
                                      Item itemToBurn=null;
 
-                                     for (Item oneItem:itemsInFuelStorage)
+                                     for (Item oneItem:itemsInFuelStorage)             // if current temp < target temp check all the items in the fuelStorage and select the one with the lowest fuel value
                                      {
                                          if (oneItem.getMaterial()<material&&oneItem.isBurnable())
                                          {
@@ -92,7 +92,7 @@ public class RefillHandler
                                          }
                                      }
 
-                                     for (Item oneItem:itemsInFuelStorage)
+                                     for (Item oneItem:itemsInFuelStorage)             // and go through all items again with that fuel byte value to select the one with the lowest weight. CONSERVE FUEL GODDAMNIT
                                      {
                                          if (oneItem.getMaterial()==material&&oneItem.getWeightGrams()<weight&&oneItem.isBurnable())
                                          {
@@ -103,7 +103,7 @@ public class RefillHandler
                                      }
 
                                      double newTemp;
-                                     if (itemToBurn!=null) {
+                                     if (itemToBurn!=null) {                    // if an item that is burnable was found, call the vanilla "burn" action effect and burn that item
                                          newTemp = (itemToBurn.getWeightGrams() * Item.fuelEfficiency(material));
                                          if (Items.getItem(accompanyingFurnace).isOnSurface())
                                          FuelStorage.logger.log(Level.INFO,
@@ -188,7 +188,7 @@ public class RefillHandler
             ps.executeUpdate();
             ps.close();
         } catch (SQLException throwables) {
-            FuelStorage.logger.log(Level.SEVERE, "something went wrong writing to the DB!", throwables);
+            FuelStorage.logger.log(Level.SEVERE, "something went wrong updating status to the DB!", throwables);
             throwables.printStackTrace();
         }
 
@@ -203,7 +203,7 @@ public class RefillHandler
                 ps.executeUpdate();
                 ps.close();
             } catch (SQLException throwables) {
-                FuelStorage.logger.log(Level.SEVERE,"something went wrong writing to the DB!",throwables);
+                FuelStorage.logger.log(Level.SEVERE,"something went wrong updating temp to the DB!",throwables);
                 throwables.printStackTrace();
             }
 
