@@ -28,12 +28,19 @@ public class FuelStorageBehavior implements BehaviourProvider {
     }
     @Override
     public List<ActionEntry> getBehavioursFor(Creature performer, Item target) {
+        FuelStorageObject fuelStorageObjectToEdit = new FuelStorageObject();
+        for (FuelStorageObject oneFuelStorage: RefillHandler.fuelStorages) {
+            if (oneFuelStorage.itemId==target.getWurmId()) {
+                fuelStorageObjectToEdit = oneFuelStorage;
+                break;
+            }
+        }
 
         if (target.getTemplateId() == FuelStorageItems.fuelStorageId) {
-            if (FuelStorageOpenPerformer.canUse(performer, target) && !RefillHandler.fuelStorages.contains(target.getWurmId())) {
+            if (FuelStorageOpenPerformer.canUse(performer, target) && (!RefillHandler.fuelStorages.contains(fuelStorageObjectToEdit)|| !fuelStorageObjectToEdit.isActive)) {
                 return new ArrayList<>(openFeeder);
 
-            } else if (target.getTemplateId() == FuelStorageItems.fuelStorageId && RefillHandler.fuelStorages.contains(target.getWurmId())) {
+            } else if (target.getTemplateId() == FuelStorageItems.fuelStorageId && RefillHandler.fuelStorages.contains(fuelStorageObjectToEdit)&& fuelStorageObjectToEdit.isActive) {
                 if (FuelStorageClosePerformer.canUse(performer, target))
                     return new ArrayList<>(closeFeeder);
 
