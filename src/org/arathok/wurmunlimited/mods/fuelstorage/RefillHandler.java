@@ -29,8 +29,7 @@ public class RefillHandler
 
 
 
-            public static void Refill() throws NoSuchItemException
-            {
+            public static void Refill() throws NoSuchItemException, SQLException {
                  TilePos tp = null;
                  long time = System.currentTimeMillis();
                  long accompanyingFurnace=-10;
@@ -43,7 +42,8 @@ public class RefillHandler
                          if (Items.getItem(fuelStorageToEdit.itemId) == null)   // make sure it actually exists if not remove it from the list
                          {
                              fuelStorages.remove(fuelStorageToEdit);
-                             FuelStorage.logger.log(Level.INFO, "fuelStorage: "+fuelStorageToEdit.itemId+ " does not exist anymore, weird! Deleting it from the list.");
+                             FuelStorage.logger.log(Level.INFO, "fuelStorage: "+fuelStorageToEdit.itemId+ " does not exist anymore, weird! Deleting it from the list and DB.");
+                             remove(FuelStorage.dbconn,fuelStorageToEdit.itemId);
                      }
                          else
                              if (fuelStorageToEdit.isActive)    // is the fuel storage even turned on? if yes check if the accompanying furnace is lit
@@ -208,9 +208,20 @@ public class RefillHandler
             }
 
 
+
     }
 
-
+    public static void remove(Connection dbconn, long aItemId ) throws SQLException {
+        try {
+            PreparedStatement ps = dbconn.prepareStatement("DELETE FROM FuelStorage WHERE itemId = ?");
+            ps.setLong(1, aItemId);
+            ps.execute();
+            ps.close();
+        } catch (SQLException throwables) {
+            FuelStorage.logger.log(Level.SEVERE, "something went wrong deleting a Fuelstroage from the DB!", throwables);
+            throwables.printStackTrace();
+        }
+    }
 
 
 }

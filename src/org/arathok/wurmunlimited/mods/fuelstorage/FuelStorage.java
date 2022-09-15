@@ -131,7 +131,10 @@ public class FuelStorage
                         {
                                 e.printStackTrace();
                                 logger.log(Level.SEVERE,"Fuel Storage somehow got deleted?",e);
-                                RefillHandler.fuelStorages.clear();
+
+                        } catch (SQLException e) {
+                                e.printStackTrace();
+                                logger.log(Level.SEVERE,"Something went wrong with the DB",e);
                         }
 
                 }
