@@ -211,7 +211,7 @@ public class RefillHandler
 
     }
 
-    public static void remove(Connection dbconn, long aItemId ) throws SQLException {
+    public static void remove(Connection dbconn, long aItemId ) {
         try {
             PreparedStatement ps = dbconn.prepareStatement("DELETE FROM FuelStorage WHERE itemId = ?");
             ps.setLong(1, aItemId);
