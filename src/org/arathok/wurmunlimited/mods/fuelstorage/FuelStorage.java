@@ -45,6 +45,7 @@ public class FuelStorage
               Config.refuelSmelters=Boolean.parseBoolean(properties.getProperty("refuelSmelters","true"));
               Config.refuelKilns=Boolean.parseBoolean(properties.getProperty("refuelKilns","true"));
               Config.refuelStills=Boolean.parseBoolean(properties.getProperty("refuelStills","true"));
+                Config.refuelStills=Boolean.parseBoolean(properties.getProperty("verboseLogging","true"));
         }
 
         @Override
@@ -90,9 +91,19 @@ public class FuelStorage
 
                         // check if the ModSupportDb table exists
                         // if not, create the table and update it with the server's last crop poll time
-                        if (!ModSupportDb.hasTable(dbconn, "FuelStorage")) {
+                        if (!ModSupportDb.hasTable(dbconn, "FuelStorageV2")) {
                                 // table create
-                                try{ PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorage (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000, isActive BOOLEAN NOT NULL DEFAULT false)");
+                                try{ PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorageV2 (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000, isActive BOOLEAN NOT NULL DEFAULT false)");
+                                        ps.execute();
+
+                                } catch (SQLException e) {
+                                        e.printStackTrace();
+                                }
+
+                        }
+                        if (ModSupportDb.hasTable(dbconn, "FuelStorage")) {
+                                // table create
+                                try{ PreparedStatement ps = dbconn.prepareStatement("DROP TABLE FuelStorage");
                                         ps.execute();
 
                                 } catch (SQLException e) {
@@ -103,6 +114,7 @@ public class FuelStorage
                         RefillHandler refillHandler = new RefillHandler();
                         RefillHandler.readFromSQL(dbconn, RefillHandler.fuelStorages);
                         ModActions.registerBehaviourProvider(new FuelStorageBehavior());
+                        ModActions.registerBehaviourProvider(new FuelStorageFeederBehavior());
 
                 } catch (SQLException e) {
                         logger.severe("something went wrong with the database!" + e);
@@ -128,16 +140,11 @@ public class FuelStorage
                         try
                         {
                                 RefillHandler.Refill();
-                        }
-                        catch (NoSuchItemException e)
-                        {
-                                e.printStackTrace();
-                                logger.log(Level.SEVERE,"Fuel Storage somehow got deleted?",e);
-
-
                         } catch (SQLException e) {
                                 e.printStackTrace();
                                 logger.log(Level.SEVERE,"Something went wrong with the DB",e);
+                        } catch (NoSuchItemException e) {
+                                e.printStackTrace();
                         }
 
                 }

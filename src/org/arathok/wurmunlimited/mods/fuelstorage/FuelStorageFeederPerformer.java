@@ -45,7 +45,7 @@ public class FuelStorageFeederPerformer implements ActionPerformer {
 
     public static boolean canUse(Creature performer, Item target)
     {
-        return performer.isPlayer() && target.getOwnerId() == performer.getWurmId() && !target.isTraded();
+        return performer.isPlayer() && target.getLastOwnerId() == performer.getWurmId() && !target.isTraded();
     }
 
     @Override
@@ -96,31 +96,41 @@ public class FuelStorageFeederPerformer implements ActionPerformer {
 
                             switch ((int) aFuelStorage.targetTemp) {
                                 case 15000: {
-                                    target.setName(target.getTemplate().getName() + ("feeder open, Full Blaze setting"));
+                                    target.setName(target.getTemplate().getName() + (" - feeder open, full blaze"),true);
+                                    target.setHidden(true);
+                                    target.setHidden(false);
                                     break;
                                 }
 
                                 case 9000: {
-                                    target.setName(target.getTemplate().getName() + ("feeder open, Wild Flames setting"));
+                                    target.setName(target.getTemplate().getName() + (" - feeder open, wild flames"),true);
+                                    target.setHidden(true);
+                                    target.setHidden(false);
                                     break;
                                 }
 
                                 case 7000: {
-                                    target.setName(target.getTemplate().getName() + ("feeder open, Small Flames setting"));
+                                    target.setName(target.getTemplate().getName() + (" - feeder open, small flames"),true);
+                                    target.setHidden(true);
+                                    target.setHidden(false);
                                     break;
                                 }
 
                                 case 5000: {
-                                    target.setName(target.getTemplate().getName() + ("feeder open, Few Flames setting"));
+                                    target.setName(target.getTemplate().getName() + (" - feeder open, few flames"),true);
+                                    target.setHidden(true);
+                                    target.setHidden(false);
                                     break;
                                 }
 
-                                case 3000: {
-                                    target.setName(target.getTemplate().getName() + ("feeder open, Glowing Coals setting"));
+                                case 4000: {
+                                    target.setName(target.getTemplate().getName() + (" - feeder open, glow. coals"),true);
+                                    target.setHidden(true);
+                                    target.setHidden(false);
                                     break;
                                 }
                             }
-
+                            if (Config.verboseLogging)
                             FuelStorage.logger.log(Level.INFO, performer.getName() + " changed the Temperature Setting on " + target.getTileX() + " " + target.getTileY() + ", is now " + targetTemp + " .");
 
 
@@ -128,14 +138,18 @@ public class FuelStorageFeederPerformer implements ActionPerformer {
 
                     }
 
-                    if (!fuelStorageFound) {
 
-                        FuelStorage.logger.log(Level.INFO, performer.getName() + " tried to change fuel storage temperature but it didn't exist on the list! (was never used) " + target.getTileX() + " " + target.getTileY() + ", thus removing it from the AutoRefuel list");
-                        performer.getCommunicator().sendSafeServerMessage("The width slider springs back to its default position and you realize to properly set it up first, you need to open its feeder at least once.");
-                    }
 
 
                 }
+
+                if (!fuelStorageFound) {
+                    if (Config.verboseLogging)
+                    FuelStorage.logger.log(Level.INFO, performer.getName() + " tried to change fuel storage temperature but it didn't exist on the list! (was never used) " + target.getTileX() + " " + target.getTileY() + ", thus removing it from the AutoRefuel list");
+                    performer.getCommunicator().sendSafeServerMessage("The width slider springs back to its default position and you realize to properly set it up first, you need to open its feeder at least once.");
+                }
+
+
             }
             catch(SQLException throwables){
                 FuelStorage.logger.severe("something went wrong with writing to the database!" + throwables);

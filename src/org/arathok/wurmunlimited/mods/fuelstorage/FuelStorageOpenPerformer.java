@@ -70,27 +70,37 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
 
                     switch ((int) aFuelStorage.targetTemp) {
                         case 15000: {
-                            target.setName(target.getTemplate().getName() + ("feeder open, Full Blaze setting"));
+                            target.setName(target.getTemplate().getName() + (" - feeder open, full blaze"),true);
+                            target.setHidden(true);
+                            target.setHidden(false);
                             break;
                         }
 
                         case 9000: {
-                            target.setName(target.getTemplate().getName() + ("feeder open, Wild Flames setting"));
+                            target.setName(target.getTemplate().getName() + (" - feeder open, wild flames"),true);
+                            target.setHidden(true);
+                            target.setHidden(false);
                             break;
                         }
 
                         case 7000: {
-                            target.setName(target.getTemplate().getName() + ("feeder open, Small Flames setting"));
+                            target.setName(target.getTemplate().getName() + (" - feeder open, small flames"),true);
+                            target.setHidden(true);
+                            target.setHidden(false);
                             break;
                         }
 
                         case 5000: {
-                            target.setName(target.getTemplate().getName() + ("feeder open, Few Flames setting"));
+                            target.setName(target.getTemplate().getName() + (" - feeder open, few flames"),true);
+                            target.setHidden(true);
+                            target.setHidden(false);
                             break;
                         }
 
-                        case 3000: {
-                            target.setName(target.getTemplate().getName() + ("feeder open, Glowing Coals setting"));
+                        case 4000: {
+                            target.setName(target.getTemplate().getName() + (" - feeder open, glow. coals"),true);
+                            target.setHidden(true);
+                            target.setHidden(false);
                             break;
                         }
 
@@ -99,6 +109,9 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
 
                     RefillHandler.fuelStorages.set(index, aFuelStorage);
                     RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
+                    if (Config.verboseLogging)
+                    FuelStorage.logger.log(Level.INFO, performer.getName() + " opened their fuel storages feeder at " + target.getTileX() + " " + target.getTileY() + ", thus adding it to the AutoRefuel list");
+                    performer.getCommunicator().sendSafeServerMessage("You open the flap of your fuel storage and it will now keep your fire lit.");
                 }
             }
 
@@ -110,11 +123,12 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
                 RefillHandler.fuelStorages.add(aFuelStorage);
 
                 RefillHandler.insert(FuelStorage.dbconn, aFuelStorage);
-
+                if (Config.verboseLogging)
                 FuelStorage.logger.log(Level.INFO, performer.getName() + " opened their fuel storages feeder at " + target.getTileX() + " " + target.getTileY() + ", thus adding it to the AutoRefuel list");
                 performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage. You notice the slider of the feeder is set up so, that it will refill the fire to keep a glowing bed of coals");
                 target.setName(target.getTemplate().getName());
-                target.setName(target.getName() + " (feeder open, slider setting: keep glowing coals)");
+                target.setName(target.getName() + " ( - feeder open, glow. coals)");
+
             }
 
 

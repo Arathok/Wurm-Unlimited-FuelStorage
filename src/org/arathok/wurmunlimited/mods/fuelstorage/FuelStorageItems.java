@@ -41,13 +41,15 @@ public class FuelStorageItems {
 
 
 
-                }).decayTime(9072000L).dimensions(200, 200, 200).weightGrams(5000).material(Materials.MATERIAL_IRON)
-                .behaviourType((short) 1).primarySkill(SkillList.ALCHEMY_NATURAL).difficulty(10) // no hard lock
+
+
+                }).decayTime(9072000L).dimensions(200, 200, 200).weightGrams(5000).material(Materials.MATERIAL_WOOD_BIRCH)
+                .behaviourType((short) 1).primarySkill(SkillList.SMITHING_BLACKSMITHING).difficulty(30) // no hard lock
                 .build();
 
         fuelStorageId = fuelStorage.getTemplateId();
         CreationEntryCreator
-                .createAdvancedEntry(SkillList.SMITHING_BLACKSMITHING, ItemList.plank, ItemList.nailsIronLarge, fuelStorageId, true, true, 0.0f, false, false,
+                .createAdvancedEntry(SkillList.SMITHING_BLACKSMITHING, ItemList.plank, ItemList.nailsIronLarge, fuelStorageId, true, true, 0.0f, false, false,0,25,
                                      CreationCategories.STORAGE)
                 .addRequirement(new CreationRequirement(1, ItemList.nailsIronLarge, 8, true))
                 .addRequirement(new CreationRequirement(2, ItemList.plank, 10, true))

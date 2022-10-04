@@ -76,7 +76,7 @@ public class FuelStorageClosePerformer implements ActionPerformer {
 
                     RefillHandler.fuelStorages.set(index, aFuelStorage);
                     RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
-
+                    if (Config.verboseLogging)
                     FuelStorage.logger.log(Level.INFO, performer.getName() + " closed their fuel storages feeder at " + target.getTileX() + " " + target.getTileY() + ", thus removing it from the AutoRefuel list");
                     performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage. Its temperature setting will stay as is");
                     target.setName(target.getTemplate().getName());
@@ -86,7 +86,7 @@ public class FuelStorageClosePerformer implements ActionPerformer {
             }
 
             if (!fuelStorageFound) {
-
+                if (Config.verboseLogging)
                 FuelStorage.logger.log(Level.INFO, performer.getName() + " tried to close flap but it didn't exist on the list! " + target.getTileX() + " " + target.getTileY() + ", thus removing it from the AutoRefuel list");
                 performer.getCommunicator().sendSafeServerMessage("You try to close the fuel storages flap but it appears to be already closed. Weird");
             }

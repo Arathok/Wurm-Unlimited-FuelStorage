@@ -8,6 +8,7 @@ public class Config
     public static boolean refuelSmelters=true;
     public static boolean refuelKilns=true;
     public static boolean refuelStills=true;
+    public static boolean verboseLogging=false;
 
 
 
