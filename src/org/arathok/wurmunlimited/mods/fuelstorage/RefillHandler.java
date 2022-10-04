@@ -164,7 +164,7 @@ public class RefillHandler
 
     public static void insert(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
         try {
-            PreparedStatement ps = dbconn.prepareStatement("upsert into FuelStorage (itemID,targetTemp,isActive) values (?,?,?)");
+            PreparedStatement ps = dbconn.prepareStatement("UPSERT INTO FuelStorage (itemId,targetTemp,isActive) VALUES (?,?,?)");
             ps.setLong(1, aFuelStorage.itemId);
             ps.setLong(2, aFuelStorage.targetTemp);
             ps.setBoolean(3, aFuelStorage.isActive);
@@ -181,7 +181,7 @@ public class RefillHandler
 
     public static void updateStatus(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
         try {
-            PreparedStatement ps = dbconn.prepareStatement("UPDATE FuelStorage SET  isActive = ? WHERE id = ?");
+            PreparedStatement ps = dbconn.prepareStatement("UPDATE FuelStorage SET  isActive = ? WHERE itemId = ?");
             ps.setBoolean(1, aFuelStorage.isActive);
             ps.setLong(2, aFuelStorage.itemId);
 
@@ -196,7 +196,7 @@ public class RefillHandler
 
         public static void updateTemp(Connection dbconn, FuelStorageObject aFuelStorage) throws SQLException {
             try {
-                PreparedStatement ps = dbconn.prepareStatement("UPDATE FuelStorage SET  targetTemp = ? WHERE id = ?");
+                PreparedStatement ps = dbconn.prepareStatement("UPDATE FuelStorage SET  targetTemp = ? WHERE itemId = ?");
                 ps.setLong(1, aFuelStorage.targetTemp);
                 ps.setLong(2, aFuelStorage.itemId);
 

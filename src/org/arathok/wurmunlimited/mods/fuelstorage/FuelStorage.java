@@ -92,9 +92,11 @@ public class FuelStorage
                         // if not, create the table and update it with the server's last crop poll time
                         if (!ModSupportDb.hasTable(dbconn, "FuelStorage")) {
                                 // table create
-                                try (PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorage (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000), isActive BOOLEAN NOT NULL DEFAULT false")) {
+                                try{ PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorage (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000, isActive BOOLEAN NOT NULL DEFAULT false)");
                                         ps.execute();
 
+                                } catch (SQLException e) {
+                                        e.printStackTrace();
                                 }
 
                         }
@@ -131,6 +133,7 @@ public class FuelStorage
                         {
                                 e.printStackTrace();
                                 logger.log(Level.SEVERE,"Fuel Storage somehow got deleted?",e);
+
 
                         } catch (SQLException e) {
                                 e.printStackTrace();
