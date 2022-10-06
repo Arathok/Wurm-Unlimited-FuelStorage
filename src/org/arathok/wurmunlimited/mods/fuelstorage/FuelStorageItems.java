@@ -24,10 +24,10 @@ public class FuelStorageItems {
         fuelStorage = new ItemTemplateBuilder("arathok.fuelStorage.fuelStorage").name("fuel storage", "fuel storage",
                                                                                     "A box made of Wood and Iron Bars designed" +
                                                                                             " to have fuel items drop into a fire place automatically." +
-                                                                                            "For it to work you need to open its feeders flap. If you want it to stop feeding fuel to the fire close the feeders flap.\n" +
-                                                                                            "There is also a slider on the feeder that allows it to use more fuel to bring the fire to a wanted higher target temperature." +
-                                                                                            "Setting it to high temperatures may result in inefficient fuel usage. By default it seems to be on the lowest setting" +
-                                                                                            "and will only refuel a fire that only has glowing coals left.")
+                                                                                            " For it to work you need to open its feeders flap. If you want it to stop feeding fuel to the fire close the feeders flap.\n" +
+                                                                                            " There is also a slider on the feeder that allows it to use more fuel to bring the fire to a wanted higher target temperature." +
+                                                                                            " Setting it to high temperatures may result in inefficient fuel usage. By default it seems to be on the lowest setting" +
+                                                                                            " and will only refuel a fire that only has glowing coals left.")
                 .modelName("model.fuelStorage.fuelStorage.")
                 .imageNumber((short) IconConstants.ICON_SMALL_CRATE)
                 .itemTypes(new short[] {
