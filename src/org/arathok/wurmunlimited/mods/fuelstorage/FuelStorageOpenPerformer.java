@@ -128,6 +128,8 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
                 performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage. You notice the slider of the feeder is set up so, that it will refill the fire to keep a glowing bed of coals");
                 target.setName(target.getTemplate().getName());
                 target.setName(target.getName() + " ( - feeder open, glow. coals)");
+                target.setHidden(true);
+                target.setHidden(false);
 
             }
 

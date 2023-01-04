@@ -9,6 +9,8 @@ public class Config
     public static boolean refuelKilns=true;
     public static boolean refuelStills=true;
     public static boolean verboseLogging=false;
+    public static long nextRefillPoll=60000;
+    public static float minimumSkill =30.0F;
 
 
 

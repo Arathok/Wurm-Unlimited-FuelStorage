@@ -81,6 +81,8 @@ public class FuelStorageClosePerformer implements ActionPerformer {
                     performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage. Its temperature setting will stay as is");
                     target.setName(target.getTemplate().getName());
                     target.setName(target.getName() + " (feeder closed)");
+                    target.setHidden(true);
+                    target.setHidden(false);
 
                 }
             }
