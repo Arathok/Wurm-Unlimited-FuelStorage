@@ -198,7 +198,7 @@ public class RefillHandler {
                     }
                 }
 
-
+            FuelStorage.finishedReadingDB=true;
             }
             rs.close();
         } catch (SQLException throwables) {

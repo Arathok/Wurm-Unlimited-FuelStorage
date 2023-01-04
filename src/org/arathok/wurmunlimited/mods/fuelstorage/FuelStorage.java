@@ -3,6 +3,7 @@ package org.arathok.wurmunlimited.mods.fuelstorage;
 
 import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.creatures.Communicator;
+import com.wurmonline.server.players.Player;
 import org.gotti.wurmunlimited.modloader.interfaces.*;
 import org.gotti.wurmunlimited.modsupport.ModSupportDb;
 import org.gotti.wurmunlimited.modsupport.actions.ModActions;
@@ -20,6 +21,7 @@ public class FuelStorage
 
         public static final Logger logger = Logger.getLogger("FuelStorage");
         public static Connection dbconn;
+        public static boolean finishedReadingDB =false;
 
 
         @Override
@@ -97,16 +99,14 @@ public class FuelStorage
                                 }
 
                         }
+
+                       
                         RefillHandler refillHandler = new RefillHandler();
-                        RefillHandler.readFromSQL(dbconn, RefillHandler.fuelStorages);
                         ModActions.registerBehaviourProvider(new FuelStorageBehavior());
                         ModActions.registerBehaviourProvider(new FuelStorageFeederBehavior());
 
                 } catch (SQLException e) {
                         logger.severe("something went wrong with the database!" + e);
-                        e.printStackTrace();
-                } catch (NoSuchItemException e) {
-                        logger.severe("no item for that id!" + e);
                         e.printStackTrace();
                 }
         }
@@ -119,12 +119,15 @@ public class FuelStorage
 
         @Override
         public void onServerPoll() {
+                
         if (!Config.classhook)
                 {
-
+                       
 
                         try
                         {
+                                if (!finishedReadingDB)
+                                RefillHandler.readFromSQL(dbconn, RefillHandler.fuelStorages);
                                 RefillHandler.Refill();
                         } catch (SQLException e) {
                                 e.printStackTrace();
