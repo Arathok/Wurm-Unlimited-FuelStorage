@@ -198,8 +198,9 @@ public class RefillHandler {
                     }
                 }
 
-            FuelStorage.finishedReadingDB=true;
+
             }
+            FuelStorage.finishedReadingDB=true;
             rs.close();
         } catch (SQLException throwables) {
             FuelStorage.logger.log(Level.SEVERE, "something went wrong writing to the DB!", throwables);
