@@ -4,6 +4,8 @@ import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.behaviours.ActionEntry;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
+import com.wurmonline.server.zones.VolaTile;
+import com.wurmonline.server.zones.Zones;
 import org.gotti.wurmunlimited.modsupport.actions.ActionEntryBuilder;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPropagation;
@@ -81,8 +83,14 @@ public class FuelStorageClosePerformer implements ActionPerformer {
                     performer.getCommunicator().sendSafeServerMessage("You close the feeder flap of the fuel storage. Its temperature setting will stay as is");
                     target.setName(target.getTemplate().getName());
                     target.setName(target.getName() + " (feeder closed)");
-                    target.setHidden(true);
-                    target.setHidden(false);
+
+                    VolaTile targetTile= Zones.getTileOrNull(target.getTilePos(), target.isOnSurface());
+                    if (targetTile!=null)
+
+                    {
+                        targetTile.makeInvisible(target);
+                        targetTile.makeVisible(target);
+                    }
 
                 }
             }

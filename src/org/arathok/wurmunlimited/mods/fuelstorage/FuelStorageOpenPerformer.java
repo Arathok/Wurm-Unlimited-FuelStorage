@@ -4,6 +4,8 @@ import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.behaviours.ActionEntry;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
+import com.wurmonline.server.zones.VolaTile;
+import com.wurmonline.server.zones.Zones;
 import org.gotti.wurmunlimited.modsupport.actions.ActionEntryBuilder;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPerformer;
 import org.gotti.wurmunlimited.modsupport.actions.ActionPropagation;
@@ -71,42 +73,42 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
                     switch ((int) aFuelStorage.targetTemp) {
                         case 15000: {
                             target.setName(target.getTemplate().getName() + (" - feeder open, full blaze"),true);
-                            target.setHidden(true);
-                            target.setHidden(false);
+
                             break;
                         }
 
                         case 9000: {
                             target.setName(target.getTemplate().getName() + (" - feeder open, wild flames"),true);
-                            target.setHidden(true);
-                            target.setHidden(false);
+
                             break;
                         }
 
                         case 7000: {
                             target.setName(target.getTemplate().getName() + (" - feeder open, small flames"),true);
-                            target.setHidden(true);
-                            target.setHidden(false);
+
                             break;
                         }
 
                         case 5000: {
                             target.setName(target.getTemplate().getName() + (" - feeder open, few flames"),true);
-                            target.setHidden(true);
-                            target.setHidden(false);
+
                             break;
                         }
 
                         case 4000: {
                             target.setName(target.getTemplate().getName() + (" - feeder open, glow. coals"),true);
-                            target.setHidden(true);
-                            target.setHidden(false);
+
                             break;
                         }
 
 
                     }
-
+                    VolaTile targetTile = Zones.getTileOrNull(target.getTilePos(),target.isOnSurface());
+                    if (targetTile!=null)
+                    {
+                        targetTile.makeInvisible(target);
+                        targetTile.makeVisible(target);
+                    }
                     RefillHandler.fuelStorages.set(index, aFuelStorage);
                     RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
                     if (Config.verboseLogging)
@@ -128,8 +130,12 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
                 performer.getCommunicator().sendSafeServerMessage("You open the feeder flap of the fuel storage. You notice the slider of the feeder is set up so, that it will refill the fire to keep a glowing bed of coals");
                 target.setName(target.getTemplate().getName());
                 target.setName(target.getName() + " ( - feeder open, glow. coals)");
-                target.setHidden(true);
-                target.setHidden(false);
+                VolaTile targetTile = Zones.getTileOrNull(target.getTilePos(),target.isOnSurface());
+                if (targetTile!=null)
+                {
+                    targetTile.makeInvisible(target);
+                    targetTile.makeVisible(target);
+                }
 
             }
 
