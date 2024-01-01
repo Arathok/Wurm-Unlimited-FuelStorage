@@ -122,7 +122,7 @@ public class FuelStorage
                 
         if (!Config.classhook)
                 {
-                       
+                        dbconn = ModSupportDb.getModSupportDb();
 
                         try
                         {
