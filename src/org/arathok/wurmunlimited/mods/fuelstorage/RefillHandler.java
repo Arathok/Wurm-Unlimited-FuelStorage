@@ -47,7 +47,7 @@ public class RefillHandler {
                     itemsInside = aFuelstorage.getItemsAsArray();
                     for (Item oneItemInside : itemsInside) {
                         if (oneItemInside.getTemperature() > 200) {
-                            oneItemInside.setTemplateId(100);
+                            oneItemInside.setTemperature((short) 100);
                         }
                     }
 
@@ -112,8 +112,8 @@ public class RefillHandler {
                                     else if (!Items.getItem(accompanyingFurnace).isOnSurface() && Config.verboseLogging)
                                         FuelStorage.logger.log(Level.INFO, "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " underground with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
 
-
-                                    short newPTemp = (short) (int) Math.min(60000.0D, Items.getItem(accompanyingFurnace).getTemperature() + newTemp);
+                                    float qlbonus=(1+(fuelStorageToEditItem.getCurrentQualityLevel()/50));
+                                    short newPTemp = (short) (int) Math.min(60000.0D, (Items.getItem(accompanyingFurnace).getTemperature() + newTemp)*qlbonus);
                                     if (Config.verboseLogging)
                                         FuelStorage.logger.log(Level.INFO, "New Temp = " + newPTemp);
                                     Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
