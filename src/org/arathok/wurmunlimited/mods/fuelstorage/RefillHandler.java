@@ -108,19 +108,24 @@ public class RefillHandler {
                                     newTemp = (itemToBurn.getWeightGrams() * Item.fuelEfficiency(material));
                                     if (Items.getItem(accompanyingFurnace).isOnSurface() && Config.verboseLogging)
                                         FuelStorage.logger.log(Level.INFO,
-                                                "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " on surface with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
+                                                "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() +" with id: "+accompanyingFurnace+" @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " on surface with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
                                     else if (!Items.getItem(accompanyingFurnace).isOnSurface() && Config.verboseLogging)
-                                        FuelStorage.logger.log(Level.INFO, "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " underground with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
+                                        FuelStorage.logger.log(Level.INFO, "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() +" with id: "+accompanyingFurnace+" @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " underground with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
 
                                     float qlbonus=(1+(fuelStorageToEditItem.getCurrentQualityLevel()/50));
-                                    short newPTemp = (short) (int) Math.min(60000.0D, (Items.getItem(accompanyingFurnace).getTemperature() + newTemp)*qlbonus);
+                                    short newPTemp = (short) (int) Math.min((Short.MAX_VALUE-1), (Items.getItem(accompanyingFurnace).getTemperature() + newTemp)*qlbonus);
                                     if (Config.verboseLogging)
-                                        FuelStorage.logger.log(Level.INFO, "New Temp = " + newPTemp);
+                                        FuelStorage.logger.log(Level.INFO, "OldTemp:"+Items.getItem(accompanyingFurnace).getTemperature()+" New Temp = " + newPTemp);
                                     Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
                                     Items.destroyItem(itemToBurn.getWurmId());
                                     count++;
 
                                 }
+                                else
+                                    if(Config.verboseLogging)
+                                    {
+                                        FuelStorage.logger.log(Level.INFO, "Fuel Storage has run out of fuel: "+accompanyingFurnace+" @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() );
+                                    }
                             }
                     }
                 } catch (NoSuchItemException e) {
@@ -262,10 +267,12 @@ public class RefillHandler {
 
     public static void remove(Connection dbconn, long aItemId) {
         try {
+
             PreparedStatement ps = dbconn.prepareStatement("DELETE FROM FuelStorageV2 WHERE itemId = ?");
             ps.setLong(1, aItemId);
             ps.execute();
             ps.close();
+            dbconn.close();
         } catch (SQLException throwables) {
             FuelStorage.logger.log(Level.SEVERE, "something went wrong deleting a Fuelstroage from the DB!", throwables);
             throwables.printStackTrace();

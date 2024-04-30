@@ -60,12 +60,12 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
             }
             FuelStorageObject aFuelStorage = new FuelStorageObject();
             boolean fuelStorageFound=false;
-
+            int index=-1;
             Iterator<FuelStorageObject> fuelStorageObjectIterator = RefillHandler.fuelStorages.iterator();
             while (fuelStorageObjectIterator.hasNext()) {
 
                 aFuelStorage = fuelStorageObjectIterator.next();
-                int index = RefillHandler.fuelStorages.indexOf(aFuelStorage);
+                index = RefillHandler.fuelStorages.indexOf(aFuelStorage);
                 if (aFuelStorage.itemId == target.getWurmId()) {
                     fuelStorageFound = true;
                     aFuelStorage.isActive = true;
@@ -109,16 +109,20 @@ public class FuelStorageOpenPerformer implements ActionPerformer {
                         targetTile.makeInvisible(target);
                         targetTile.makeVisible(target);
                     }
-                    RefillHandler.fuelStorages.set(index, aFuelStorage);
-                    RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
+
                     if (Config.verboseLogging)
                     FuelStorage.logger.log(Level.INFO, performer.getName() + " opened their fuel storages feeder at " + target.getTileX() + " " + target.getTileY() + ", thus adding it to the AutoRefuel list");
                     performer.getCommunicator().sendSafeServerMessage("You open the flap of your fuel storage and it will now keep your fire lit.");
                 }
             }
+            if(fuelStorageFound) {
+                RefillHandler.fuelStorages.set(index, aFuelStorage);
+                RefillHandler.updateStatus(FuelStorage.dbconn, aFuelStorage);
+            }
 
             if (!fuelStorageFound)
             {
+                aFuelStorage = new FuelStorageObject();
                 aFuelStorage.itemId = target.getWurmId();
                 aFuelStorage.isActive = true;
                 aFuelStorage.targetTemp = 4000;

@@ -22,6 +22,7 @@ public class FuelStorage
         public static final Logger logger = Logger.getLogger("FuelStorage");
         public static Connection dbconn;
         public static boolean finishedReadingDB =false;
+        private boolean dbcheck;
 
 
         @Override
@@ -73,42 +74,10 @@ public class FuelStorage
 
         @Override
         public void onServerStarted() {
-                // TODO Auto-generated method stub
-                try {
-                        dbconn = ModSupportDb.getModSupportDb();
+                ModActions.registerBehaviourProvider(new FuelStorageBehavior());
+                ModActions.registerBehaviourProvider(new FuelStorageFeederBehavior());
 
-                        // check if the ModSupportDb table exists
-                        // if not, create the table and update it with the server's last crop poll time
-                        if (!ModSupportDb.hasTable(dbconn, "FuelStorageV2")) {
-                                // table create
-                                try{ PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorageV2 (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000, isActive BOOLEAN NOT NULL DEFAULT false)");
-                                        ps.execute();
 
-                                } catch (SQLException e) {
-                                        e.printStackTrace();
-                                }
-
-                        }
-                        if (ModSupportDb.hasTable(dbconn, "FuelStorage")) {
-                                // table create
-                                try{ PreparedStatement ps = dbconn.prepareStatement("DROP TABLE FuelStorage");
-                                        ps.execute();
-
-                                } catch (SQLException e) {
-                                        e.printStackTrace();
-                                }
-
-                        }
-
-                       
-                        RefillHandler refillHandler = new RefillHandler();
-                        ModActions.registerBehaviourProvider(new FuelStorageBehavior());
-                        ModActions.registerBehaviourProvider(new FuelStorageFeederBehavior());
-
-                } catch (SQLException e) {
-                        logger.severe("something went wrong with the database!" + e);
-                        e.printStackTrace();
-                }
         }
 
                 @Override
@@ -119,6 +88,46 @@ public class FuelStorage
 
         @Override
         public void onServerPoll() {
+                try {
+                        if (!dbcheck) {
+                                dbconn = ModSupportDb.getModSupportDb();
+
+                                // check if the ModSupportDb table exists
+                                // if not, create the table and update it with the server's last crop poll time
+                                if (!ModSupportDb.hasTable(dbconn, "FuelStorageV2")) {
+                                        // table create
+                                        try {
+                                                PreparedStatement ps = dbconn.prepareStatement("CREATE TABLE FuelStorageV2 (itemId LONG PRIMARY KEY NOT NULL DEFAULT 0, targetTemp LONG NOT NULL DEFAULT 4000, isActive BOOLEAN NOT NULL DEFAULT false)");
+                                                ps.execute();
+
+                                        } catch (SQLException e) {
+                                                logger.log(Level.WARNING, "Something went wrong with the DB!" + e.getMessage(), e);
+                                        }
+
+                                }
+                                if (ModSupportDb.hasTable(dbconn, "FuelStorage")) {
+                                        // table create
+                                        try {
+                                                PreparedStatement ps = dbconn.prepareStatement("DROP TABLE FuelStorage");
+                                                ps.execute();
+
+                                        } catch (SQLException e) {
+                                                logger.log(Level.WARNING, "Something went wrong with the DB!" + e.getMessage(), e);
+
+                                        }
+
+                                }
+                                dbcheck=true;
+                        }
+
+
+                        RefillHandler refillHandler = new RefillHandler();
+
+
+                } catch (SQLException e) {
+                        logger.severe("something went wrong with the database!" + e);
+                        e.printStackTrace();
+                }
                 
         if (!Config.classhook)
                 {
