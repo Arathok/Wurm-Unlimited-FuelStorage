@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 
 
@@ -39,11 +40,17 @@ public class RefillHandler {
             int count = 0;
             for (FuelStorageObject fuelStorageToEdit : fuelStorages) { // from a list of all fuelstorages go through each one
 
-                try {
-                    // PREVENT ITEMS FROM BURNING INSIDE!!!
-                    Item aFuelstorage = null;
-                    Item[] itemsInside = null;
-                    aFuelstorage = Items.getItem(fuelStorageToEdit.itemId);
+
+                // PREVENT ITEMS FROM BURNING INSIDE!!!
+                Item aFuelstorage = null;
+                Item[] itemsInside = null;
+                Optional<Item> maybeFuelStorage = Items.getItemOptional(fuelStorageToEdit.itemId);
+
+
+
+                if (maybeFuelStorage.isPresent()) {
+
+                    aFuelstorage = maybeFuelStorage.get();
                     itemsInside = aFuelstorage.getItemsAsArray();
                     for (Item oneItemInside : itemsInside) {
                         if (oneItemInside.getTemperature() > 200) {
@@ -51,14 +58,12 @@ public class RefillHandler {
                         }
                     }
 
-                    if (Items.getItem(fuelStorageToEdit.itemId) != null && fuelStorageToEdit.isActive)    // is the fuel storage even turned on? if yes check if the accompanying furnace is lit
+                    if (fuelStorageToEdit.isActive)    // is the fuel storage even turned on? if yes check if the accompanying furnace is lit
                     {
-                        Item fuelStorageToEditItem = Items.getItem(fuelStorageToEdit.itemId);
 
+                        tp = aFuelstorage.getTilePos();   //get the tile pos and make sure that an underground fuel Storage does not fuel a surface furnace and vice versa
 
-                        tp = fuelStorageToEditItem.getTilePos();   //get the tile pos and make sure that an underground fuel Storage does not fuel a surface furnace and vice versa
-
-                        if (fuelStorageToEditItem.isOnSurface()) {
+                        if (aFuelstorage.isOnSurface()) {
                             for (Item oneItem : Zones.getTileOrNull(tp, true).getItems()) {
                                 if ((oneItem.getTemplateId() == 178 && Config.refuelOvens) || (oneItem.getTemplateId() == ItemList.still && Config.refuelStills) || (oneItem.getTemplateId() == 180 && Config.refuelForges) || (oneItem.getTemplateId() == 1023 && Config.refuelKilns) || (oneItem.getTemplateId() == 1028 && Config.refuelSmelters)) {
                                     accompanyingFurnace = oneItem.getWurmId();
@@ -76,11 +81,14 @@ public class RefillHandler {
 
                                 }
                             }
+                        Optional<Item> maybeAccompanyingFurnace = Items.getItemOptional(accompanyingFurnace);
 
-                        if (accompanyingFurnace != -10 && accompanyingFurnace != 0)     // if there is a furnace found on the same tile check for the target temp
+                        if (maybeAccompanyingFurnace.isPresent()) {
+                            Item accompanyingFurnaceItem = maybeAccompanyingFurnace.get();
 
-                            if (Items.getItem(accompanyingFurnace).getTemperature() < fuelStorageToEdit.targetTemp && Items.getItem(accompanyingFurnace).getTemperature() > 1000 && !fuelStorageToEditItem.getItems().isEmpty()) {
-                                Item[] itemsInFuelStorage = fuelStorageToEditItem.getItemsAsArray();
+                            if (accompanyingFurnaceItem.getTemperature() < fuelStorageToEdit.targetTemp && accompanyingFurnaceItem.getTemperature() > 1000 && !aFuelstorage.getItems().isEmpty()) {
+
+                                Item[] itemsInFuelStorage = aFuelstorage.getItemsAsArray();
                                 byte material = Materials.MATERIAL_MAX;
                                 int weight = 30000;
                                 Item itemToBurn = null;
@@ -105,37 +113,48 @@ public class RefillHandler {
 
                                 double newTemp;
                                 if (itemToBurn != null) {                    // if an item that is burnable was found, call the vanilla "burn" action effect and burn that item
-                                    newTemp = (itemToBurn.getWeightGrams() * Item.fuelEfficiency(material));
-                                    if (Items.getItem(accompanyingFurnace).isOnSurface() && Config.verboseLogging)
-                                        FuelStorage.logger.log(Level.INFO,
-                                                "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() +" with id: "+accompanyingFurnace+" @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " on surface with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
-                                    else if (!Items.getItem(accompanyingFurnace).isOnSurface() && Config.verboseLogging)
-                                        FuelStorage.logger.log(Level.INFO, "fueled the fire place " + Items.getItem(accompanyingFurnace).getTemplate().getName() +" with id: "+accompanyingFurnace+" @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() + " underground with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
 
-                                    float qlbonus=(1+(fuelStorageToEditItem.getCurrentQualityLevel()/50));
-                                    short newPTemp = (short) (int) Math.min((Short.MAX_VALUE-1), (Items.getItem(accompanyingFurnace).getTemperature() + newTemp)*qlbonus);
+                                    newTemp = (itemToBurn.getWeightGrams() * Item.fuelEfficiency(material));
+                                    if (accompanyingFurnaceItem.isOnSurface() && Config.verboseLogging)
+                                        FuelStorage.logger.log(Level.INFO,
+                                                "fueled the fire place " + accompanyingFurnaceItem.getTemplate().getName() + " with id: " + accompanyingFurnace + " @ " + accompanyingFurnaceItem.getTileX() + " " + accompanyingFurnaceItem.getTileY() + " on surface with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
+                                    else if (!accompanyingFurnaceItem.isOnSurface() && Config.verboseLogging)
+                                        FuelStorage.logger.log(Level.INFO, "fueled the fire place " + accompanyingFurnaceItem.getTemplate().getName() + " with id: " + accompanyingFurnace + " @ " + accompanyingFurnaceItem.getTileX() + " " + accompanyingFurnaceItem.getTileY() + " underground with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
+
+                                    float qlbonus = (1 + (aFuelstorage.getCurrentQualityLevel() / 50));
+                                    short newPTemp = (short) (int) Math.min((Short.MAX_VALUE - 1), (accompanyingFurnaceItem.getTemperature() + newTemp) * qlbonus);
                                     if (Config.verboseLogging)
-                                        FuelStorage.logger.log(Level.INFO, "OldTemp:"+Items.getItem(accompanyingFurnace).getTemperature()+" New Temp = " + newPTemp);
-                                    Items.getItem(accompanyingFurnace).setTemperature(newPTemp);
+                                        FuelStorage.logger.log(Level.INFO, "OldTemp:" + accompanyingFurnaceItem.getTemperature() + " New Temp = " + newPTemp);
+                                    accompanyingFurnaceItem.setTemperature(newPTemp);
                                     Items.destroyItem(itemToBurn.getWurmId());
                                     count++;
-
-                                }
-                                else
-                                    if(Config.verboseLogging)
-                                    {
-                                        FuelStorage.logger.log(Level.INFO, "Fuel Storage has run out of fuel: "+accompanyingFurnace+" @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY() );
+                                } else { // NO Fuelable item present
+                                    if (Config.verboseLogging) {
+                                        FuelStorage.logger.log(Level.INFO, "Fuel Storage has run out of fuel and closed: " + accompanyingFurnace + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY());
                                     }
+                                    // CLOSE FUELSTORAGE
+                                    fuelStorageToEdit.isActive = false;
+                                    aFuelstorage.setName(aFuelstorage.getTemplate().getName() + " (feeder closed)");// target.setName(target.getName() + " (feeder closed)");
+                                    updateStatus(FuelStorage.dbconn, fuelStorageToEdit);
+                                }
+                            } else if (aFuelstorage.getItems().isEmpty()) { // No Item present
+                                if (Config.verboseLogging) {
+                                    FuelStorage.logger.log(Level.INFO, "Fuel Storage has run out of fuel and closed: " + accompanyingFurnace + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY());
+                                }
+                                // CLOSE FUELSTORAGE
+                                fuelStorageToEdit.isActive = false;
+                                aFuelstorage.setName(aFuelstorage.getTemplate().getName() + " (feeder closed)");// target.setName(target.getName() + " (feeder closed)");
+                                updateStatus(FuelStorage.dbconn, fuelStorageToEdit);
                             }
+                        }
                     }
-                } catch (NoSuchItemException e) {
-                    FuelStorage.logger.log(Level.SEVERE, "fuelstorage somehow got deleted or decayed? Rebuilding DB and List.");
+                } else {
+                    FuelStorage.logger.log(Level.SEVERE, "fuelstorage with stored wurmId "+fuelStorageToEdit.itemId+" somehow got deleted or decayed? Rebuilding DB and List.");
                     remove(FuelStorage.dbconn, fuelStorageToEdit.itemId);
                     fuelStorages.clear();
                     readFromSQL(FuelStorage.dbconn, fuelStorages);
-                    e.printStackTrace();
-
                 }
+
             }
             if (count > 0)
                 FuelStorage.logger.log(Level.INFO, "Refuelled " + count + " furnaces");
@@ -205,7 +224,7 @@ public class RefillHandler {
 
 
             }
-            FuelStorage.finishedReadingDB=true;
+            FuelStorage.finishedReadingDB = true;
             rs.close();
         } catch (SQLException throwables) {
             FuelStorage.logger.log(Level.SEVERE, "something went wrong writing to the DB!", throwables);
@@ -272,7 +291,7 @@ public class RefillHandler {
             ps.setLong(1, aItemId);
             ps.execute();
             ps.close();
-            dbconn.close();
+
         } catch (SQLException throwables) {
             FuelStorage.logger.log(Level.SEVERE, "something went wrong deleting a Fuelstroage from the DB!", throwables);
             throwables.printStackTrace();

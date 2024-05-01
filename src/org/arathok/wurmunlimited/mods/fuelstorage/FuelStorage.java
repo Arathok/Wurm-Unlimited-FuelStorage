@@ -49,7 +49,7 @@ public class FuelStorage
                 if (message != null&&message.startsWith("#FuelStorageVersion"))
                 {
 
-                        communicator.sendSafeServerMessage("You are on FuelStorage Version 3.2 ");
+                        communicator.sendSafeServerMessage("You are on FuelStorage Version 3.3 ");
 
                 }
 
