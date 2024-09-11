@@ -8,7 +8,9 @@ import com.wurmonline.server.NoSuchItemException;
 import com.wurmonline.server.items.Item;
 import com.wurmonline.server.items.ItemList;
 import com.wurmonline.server.items.Materials;
+import com.wurmonline.server.sounds.SoundPlayer;
 import com.wurmonline.server.zones.Zones;
+import com.wurmonline.shared.util.MaterialUtilities;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -122,7 +124,7 @@ public class RefillHandler {
                                         FuelStorage.logger.log(Level.INFO, "fueled the fire place " + accompanyingFurnaceItem.getTemplate().getName() + " with id: " + accompanyingFurnace + " @ " + accompanyingFurnaceItem.getTileX() + " " + accompanyingFurnaceItem.getTileY() + " underground with " + itemToBurn.getTemplate().getName() + " Which weighed " + itemToBurn.getWeightGrams());
 
                                     float qlbonus = (1 + (aFuelstorage.getCurrentQualityLevel() / 50));
-                                    short newPTemp = (short) (int) Math.min((Short.MAX_VALUE - 1), (accompanyingFurnaceItem.getTemperature() + newTemp) * qlbonus);
+                                    short newPTemp = (short) (int) Math.min((Short.MAX_VALUE - 1), (accompanyingFurnaceItem.getTemperature() + (newTemp * qlbonus)));
                                     if (Config.verboseLogging)
                                         FuelStorage.logger.log(Level.INFO, "OldTemp:" + accompanyingFurnaceItem.getTemperature() + " New Temp = " + newPTemp);
                                     accompanyingFurnaceItem.setTemperature(newPTemp);
@@ -131,20 +133,24 @@ public class RefillHandler {
                                 } else { // NO Fuelable item present
                                     if (Config.verboseLogging) {
                                         FuelStorage.logger.log(Level.INFO, "Fuel Storage has run out of fuel and closed: " + accompanyingFurnace + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY());
+
                                     }
                                     // CLOSE FUELSTORAGE
                                     fuelStorageToEdit.isActive = false;
                                     aFuelstorage.setName(aFuelstorage.getTemplate().getName() + " (feeder closed)");// target.setName(target.getName() + " (feeder closed)");
                                     updateStatus(FuelStorage.dbconn, fuelStorageToEdit);
+                                    SoundPlayer.playSound("sound.object.lockunlock",aFuelstorage,1.6F);
                                 }
                             } else if (aFuelstorage.getItems().isEmpty()) { // No Item present
                                 if (Config.verboseLogging) {
                                     FuelStorage.logger.log(Level.INFO, "Fuel Storage has run out of fuel and closed: " + accompanyingFurnace + " @ " + Items.getItem(accompanyingFurnace).getTileX() + " " + Items.getItem(accompanyingFurnace).getTileY());
+
                                 }
                                 // CLOSE FUELSTORAGE
                                 fuelStorageToEdit.isActive = false;
                                 aFuelstorage.setName(aFuelstorage.getTemplate().getName() + " (feeder closed)");// target.setName(target.getName() + " (feeder closed)");
                                 updateStatus(FuelStorage.dbconn, fuelStorageToEdit);
+                                SoundPlayer.playSound("sound.object.lockunlock",aFuelstorage,1.6F);
                             }
                         }
                     }
@@ -173,65 +179,73 @@ public class RefillHandler {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
 
-
                 FuelStorageObject afuelStorageObject = new FuelStorageObject();
                 afuelStorageObject.itemId = rs.getLong("itemId"); // liest quasi den Wert von der Spalte
                 afuelStorageObject.targetTemp = rs.getLong("targetTemp"); // liest quasi den Wert von der Spalte
                 afuelStorageObject.isActive = rs.getBoolean("isActive"); // liest quasi den Wert von der Spalte
-                FuelStorage.logger.log(Level.INFO, "adding: " + afuelStorageObject.itemId);
-                fuelStorages.add(afuelStorageObject);
+                Optional<Item> maybeaFuelStorageItem = Items.getItemOptional(afuelStorageObject.itemId);
+                if (maybeaFuelStorageItem.isPresent()) {
+                    Item aFuelStorageItem = maybeaFuelStorageItem.get();
 
-                Item aFuelStorageItem = Items.getItem(afuelStorageObject.itemId);
-                aFuelStorageItem.setName(aFuelStorageItem.getTemplate().getName() + " - feeder open");
+                    FuelStorage.logger.log(Level.INFO, "adding: " + afuelStorageObject.itemId);
+                    fuelStorages.add(afuelStorageObject);
 
-                switch ((int) afuelStorageObject.targetTemp) {
-                    case 15000: {
-                        aFuelStorageItem.setName(aFuelStorageItem.getName() + (", full blaze"), true);
-                        aFuelStorageItem.setHidden(true);
-                        aFuelStorageItem.setHidden(false);
+                    if (afuelStorageObject.isActive) {
+                        aFuelStorageItem.setName(aFuelStorageItem.getTemplate().getName() + " - feeder open");
 
-                        break;
+                        switch ((int) afuelStorageObject.targetTemp) {
+                            case 15000: {
+                                aFuelStorageItem.setName(aFuelStorageItem.getName() + (", full blaze"), true);
+                                aFuelStorageItem.setHidden(true);
+                                aFuelStorageItem.setHidden(false);
+
+                                break;
+                            }
+
+                            case 9000: {
+                                aFuelStorageItem.setName(aFuelStorageItem.getName() + (", wild flames"), true);
+                                aFuelStorageItem.setHidden(true);
+                                aFuelStorageItem.setHidden(false);
+                                break;
+                            }
+
+                            case 7000: {
+                                aFuelStorageItem.setName(aFuelStorageItem.getName() + (", small flames"), true);
+                                aFuelStorageItem.setHidden(true);
+                                aFuelStorageItem.setHidden(false);
+                                break;
+                            }
+
+                            case 5000: {
+                                aFuelStorageItem.setName(aFuelStorageItem.getName() + (", few flames"), true);
+                                aFuelStorageItem.setHidden(true);
+                                aFuelStorageItem.setHidden(false);
+                                break;
+                            }
+
+                            case 4000: {
+                                aFuelStorageItem.setName(aFuelStorageItem.getName() + (", glow. coals"), true);
+                                aFuelStorageItem.setHidden(true);
+                                aFuelStorageItem.setHidden(false);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        aFuelStorageItem.setName(aFuelStorageItem.getTemplate().getName()+" - feeder closed");
                     }
 
-                    case 9000: {
-                        aFuelStorageItem.setName(aFuelStorageItem.getName() + (", wild flames"), true);
-                        aFuelStorageItem.setHidden(true);
-                        aFuelStorageItem.setHidden(false);
-                        break;
-                    }
-
-                    case 7000: {
-                        aFuelStorageItem.setName(aFuelStorageItem.getName() + (", small flames"), true);
-                        aFuelStorageItem.setHidden(true);
-                        aFuelStorageItem.setHidden(false);
-                        break;
-                    }
-
-                    case 5000: {
-                        aFuelStorageItem.setName(aFuelStorageItem.getName() + (", few flames"), true);
-                        aFuelStorageItem.setHidden(true);
-                        aFuelStorageItem.setHidden(false);
-                        break;
-                    }
-
-                    case 4000: {
-                        aFuelStorageItem.setName(aFuelStorageItem.getName() + (", glow. coals"), true);
-                        aFuelStorageItem.setHidden(true);
-                        aFuelStorageItem.setHidden(false);
-                        break;
-                    }
                 }
-
+                else
+                    remove(dbconn, afuelStorageObject.itemId);
 
             }
             FuelStorage.finishedReadingDB = true;
             rs.close();
         } catch (SQLException throwables) {
-            FuelStorage.logger.log(Level.SEVERE, "something went wrong writing to the DB!", throwables);
-            throwables.printStackTrace();
-        } catch (NoSuchItemException e) {
-            FuelStorage.logger.log(Level.SEVERE, "no item found for this ID", e);
-            e.printStackTrace();
+            FuelStorage.logger.log(Level.SEVERE, "something went wrong writing to the DB!" + throwables.getMessage(), throwables);
+
         }
 
     }

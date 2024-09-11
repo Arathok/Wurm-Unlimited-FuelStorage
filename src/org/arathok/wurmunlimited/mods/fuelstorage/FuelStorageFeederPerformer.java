@@ -4,6 +4,7 @@ import com.wurmonline.server.behaviours.Action;
 import com.wurmonline.server.behaviours.ActionEntry;
 import com.wurmonline.server.creatures.Creature;
 import com.wurmonline.server.items.Item;
+import com.wurmonline.server.sounds.SoundPlayer;
 import com.wurmonline.server.zones.VolaTile;
 import com.wurmonline.server.zones.Zones;
 import org.gotti.wurmunlimited.modsupport.actions.ActionEntryBuilder;
@@ -139,6 +140,7 @@ public class FuelStorageFeederPerformer implements ActionPerformer {
                     {
                         targetTile.makeInvisible(target);
                         targetTile.makeVisible(target);
+                        SoundPlayer.playSound("sound.object.lockunlock",target,1.6F);
                     }
 
 
